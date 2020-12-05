@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Head from "next/head";
 
+// Component
+import Navbar from "../containers/Navbar";
+
 // MUI
+import Container from "@material-ui/core/Container";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { light, dark } from "../src/theme";
 import { ThemeProvider } from "@material-ui/core/styles";
@@ -51,6 +55,9 @@ export default function MyApp(props) {
           <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
+            <Container maxWidth="xl">
+              <Navbar />
+            </Container>
             <Component {...pageProps} />
           </ThemeProvider>
         </ThemeContext.Provider>

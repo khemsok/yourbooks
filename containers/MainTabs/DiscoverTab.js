@@ -137,7 +137,7 @@ export default function DiscoverTab({ value, index }) {
     }
   };
 
-  useEffect(() => {
+  const fetchDiscoverBooks = () => {
     const url = "https://www.googleapis.com/books/v1/volumes?q=sapiens&maxResults=2";
     fetch(url)
       .then((res) => res.json())
@@ -145,9 +145,13 @@ export default function DiscoverTab({ value, index }) {
         setDiscoverBooks(data.items);
       })
       .catch((err) => console.error(err));
+  };
+
+  useEffect(() => {
+    fetchDiscoverBooks();
   }, []);
 
-  console.log(discoverBooks, "discover books");
+  console.log(bookList);
 
   const displayDetails = (publishedDate, categories, rating) => {
     return [moment(publishedDate).format("YYYY"), categories.join(", "), rating ? `${rating}/5` : undefined].filter((el) => el !== undefined).join(" • ");
@@ -215,13 +219,23 @@ export default function DiscoverTab({ value, index }) {
               );
             }}
             getOptionLabel={(option) => {
-              return option.volumeInfo.title;
+              return option.volumeInfo && option.volumeInfo.title;
             }}
-            disableClearable
             loading={isLoading}
-            // onChange={handleSelected}
-            onChange={(e, v) => {
-              console.log(v, "onchange");
+            onChange={(e, v, r) => {
+              console.log(r);
+              if (r === "clear") {
+                console.log("hello clear");
+                setBookList([]);
+                fetchDiscoverBooks();
+              } else if (r === "select-option") {
+                setDiscoverBooks([v]);
+              }
+            }}
+            onInputChange={(e, v, r) => {
+              if (r === "clear") {
+                setBookList([]);
+              }
             }}
             renderInput={(params) => (
               <TextField

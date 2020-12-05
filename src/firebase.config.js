@@ -2,13 +2,13 @@ import firebase from "firebase";
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
-    apiKey: "AIzaSyDLJPw5_tZKg9iAk4-8gvN553SQddPu20c",
-    authDomain: "yourbooks-7e202.firebaseapp.com",
-    projectId: "yourbooks-7e202",
-    storageBucket: "yourbooks-7e202.appspot.com",
-    messagingSenderId: "325489487157",
-    appId: "1:325489487157:web:456316afc724f999ed707c",
-    measurementId: "G-MKRG0YD1B5",
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_APIKEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECTID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGEBUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APPID,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENTID,
   });
 }
 
