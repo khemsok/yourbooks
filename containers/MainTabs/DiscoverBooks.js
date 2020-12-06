@@ -104,22 +104,6 @@ export default function DiscoverBooks() {
   const displayDetails = (publishedDate, categories, rating) => {
     return [moment(publishedDate).format("YYYY"), categories && categories.join(", "), rating ? `${rating}/5` : undefined].filter((el) => el !== undefined).join(" • ");
   };
-
-  const updateDiscoverBooks = async () => {
-    let books = [];
-    for (const book of discoverBooks) {
-      let { read, docId } = await checkDocDetail(book.docId);
-      books.push({
-        book: book.book,
-        read: !read,
-        docId: docId,
-      });
-    }
-    setDiscoverBooks(() => books);
-  };
-
-  console.log(discoverBooks, "from compo");
-
   const displayDiscoverBooks = discoverBooks ? (
     discoverBooks.map(({ book, read, docId }, index) => (
       <div style={{ marginBottom: "30px" }} key={index}>
@@ -177,23 +161,26 @@ export default function DiscoverBooks() {
             ) : (
               <Button
                 onClick={async () => {
-                  const docRef = await db.collection("books").add({
-                    bookId: book.id,
-                    data: book.volumeInfo,
-                    start: new Date(),
-                    end: "",
-                    userId: user.uid,
-                    rating: "",
-                  }); // need document id
-                  console.log(docRef.id, "book id");
-                  // await updateDiscoverBooks(); // might not need to do a call to db, just need to update the state if the await does not have any error
+                  const doc = await db.collection("books").where("bookId", "==", book.id).where("userId", "==", user.uid).limit(1).get();
+                  let docRef;
+                  if (doc.empty) {
+                    docRef = await db.collection("books").add({
+                      bookId: book.id,
+                      data: book.volumeInfo,
+                      start: new Date(),
+                      end: "",
+                      userId: user.uid,
+                      rating: "",
+                    });
+                  }
+
                   setDiscoverBooks((books) =>
                     books.map((curBook) => {
                       if (curBook.book.id === book.id) {
                         return {
                           book: curBook.book,
                           read: true,
-                          docId: docRef.id,
+                          docId: doc.empty ? docRef.id : doc.docs[0].id,
                         };
                       } else {
                         return curBook;
