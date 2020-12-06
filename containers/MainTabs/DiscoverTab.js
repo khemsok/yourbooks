@@ -15,6 +15,9 @@ import Container from "@material-ui/core/Container";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
+// util
+import { TabPanel } from "../../util/reusableComponents";
+
 // const useStyles = makeStyles({
 //   root: {
 //     // "& .Mui-focused ": {
@@ -91,20 +94,6 @@ function ReadMore({ children }) {
   );
 }
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
-      {value === index && (
-        <>
-          <Typography>{children}</Typography>
-        </>
-      )}
-    </div>
-  );
-}
-
 export default function DiscoverTab({ value, index }) {
   const classes = useStyles();
 
@@ -169,18 +158,19 @@ export default function DiscoverTab({ value, index }) {
             }}
             loading={isLoading}
             onChange={async (e, v, r) => {
-              console.log(r);
+              // console.log(r);
               if (r === "clear") {
                 setBookList([]);
-                fetchDiscoverBooks();
+                // fetchDiscoverBooks();
               } else if (r === "select-option") {
                 let { read, docId } = await checkDocDetail(v.id);
                 setDiscoverBooks([{ book: v, read: !read, docId: docId }]);
+                setBookList([]);
               }
             }}
             onInputChange={(e, v, r) => {
               if (r === "clear") {
-                setBookList([]);
+                // setBookList([]);
               }
             }}
             renderInput={(params) => (

@@ -1,3 +1,7 @@
+// Context
+import { DiscoverProvider } from "../context/DiscoverContext";
+import { ReadingListProvider } from "../context/ReadingListContext";
+
 // Containers
 import MainTabs from "../containers/MainTabs";
 
@@ -8,7 +12,11 @@ export default function Home() {
   return (
     <>
       <Container maxWidth="lg">
-        <MainTabs />
+        <DiscoverProvider>
+          <ReadingListProvider>
+            <MainTabs />
+          </ReadingListProvider>
+        </DiscoverProvider>
       </Container>
     </>
   );

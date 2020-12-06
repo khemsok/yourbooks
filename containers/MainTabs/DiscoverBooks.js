@@ -85,7 +85,7 @@ function ReadMore({ children }) {
       <div>
         <div className={isHidden ? classes.hidden : null}>{children}</div>
         <span>
-          {children.length > 425 ? (
+          {children.length > 400 ? (
             <a style={{ cursor: "pointer", fontWeight: "700" }} onClick={() => setIsHidden(!isHidden)}>
               {isHidden ? "(More)" : "(Less)"}
             </a>
@@ -115,6 +115,7 @@ export default function DiscoverBooks() {
           <div>
             <Typography variant="h6" className={classes.discoverBooksTitle}>
               {book.volumeInfo.title}
+              {book.volumeInfo.subtitle && `: ${book.volumeInfo.subtitle}`}
             </Typography>
             <Typography variant="body1" className={classes.discoverBooksAuthor}>
               {book.volumeInfo.authors && book.volumeInfo.authors.join(", ")}

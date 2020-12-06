@@ -2,19 +2,17 @@ import { useState, useEffect } from "react";
 
 // Context
 import { useAuth } from "../../context/AuthContext";
-import { DiscoverProvider } from "../../context/DiscoverContext";
+import { useDiscover } from "../../context/DiscoverContext";
+import { useReadingList } from "../../context/ReadingListContext";
 
 // MUI
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import Container from "@material-ui/core/Container";
-import Box from "@material-ui/core/Box";
 
 // Components
 import DiscoverTab from "./DiscoverTab";
+import ReadingListTab from "./ReadingListTab";
 
 const StyledTabs = withStyles((theme) => ({
   indicator: {
@@ -48,26 +46,23 @@ const StyledTab = withStyles((theme) => ({
   },
 }))((props) => <Tab disableRipple {...props} />);
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
 export default function MainTabs() {
   const [value, setValue] = useState(0);
+
+  const { fetchDiscoverBooks } = useDiscover();
+  const { fetchReadingList } = useReadingList();
 
   const { user } = useAuth();
 
   const handleChange = (event, newValue) => {
+    if (user && newValue === 1) {
+      fetchDiscoverBooks();
+    } else if (!user && newValue === 0) {
+      fetchDiscoverBooks();
+    }
+    if (user && newValue === 0) {
+      fetchReadingList();
+    }
     setValue(newValue);
   };
 
@@ -83,18 +78,18 @@ export default function MainTabs() {
   console.log(value);
 
   return (
-    <DiscoverProvider>
+    <>
       {user ? (
         <>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: "30px" }}>
             <StyledTabs value={value} onChange={handleChange}>
               <StyledTab label="Reading List" />
               <StyledTab label="Discover" />
-
               <StyledTab label="Finished Books" />
             </StyledTabs>
           </div>
           <DiscoverTab value={value} index={1} />
+          <ReadingListTab value={value} index={0} />
         </>
       ) : (
         <>
@@ -106,6 +101,6 @@ export default function MainTabs() {
           <DiscoverTab value={value} index={0} />
         </>
       )}
-    </DiscoverProvider>
+    </>
   );
 }
