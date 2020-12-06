@@ -85,7 +85,7 @@ function ReadMore({ children }) {
       <div>
         <div className={isHidden ? classes.hidden : null}>{children}</div>
         <span>
-          {children.length > 400 ? (
+          {children.length > 425 ? (
             <a style={{ cursor: "pointer", fontWeight: "700" }} onClick={() => setIsHidden(!isHidden)}>
               {isHidden ? "(More)" : "(Less)"}
             </a>
