@@ -37,7 +37,6 @@ export function DiscoverProvider({ children }) {
   const fetchDiscoverBooks = async () => {
     const url = "https://www.googleapis.com/books/v1/volumes?q=sapiens&maxResults=2";
     try {
-      console.log("hello?????");
       const res = await fetch(url);
       const data = await res.json();
       let books = [];
@@ -50,7 +49,6 @@ export function DiscoverProvider({ children }) {
           docId: docId,
         });
       }
-      console.log(books);
       setDiscoverBooks(books);
     } catch (err) {
       console.error(err);

@@ -1,31 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // Component
 import DiscoverBooks from "./DiscoverBooks";
 
 // Context
-import { DiscoverProvider, useDiscover } from "../../context/DiscoverContext";
+import { useDiscover } from "../../context/DiscoverContext";
 import { useAuth } from "../../context/AuthContext";
 
 // MUI
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
-import Box from "@material-ui/core/Box";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Button from "@material-ui/core/Button";
-
-// MUI Icon
-import IconButton from "@material-ui/core/IconButton";
-import HighlightOffIcon from "@material-ui/icons/HighlightOff";
-import AddIcon from "@material-ui/icons/Add";
-
-// util
-import moment from "moment";
-import { Loading } from "react-loading-dot";
-import { db } from "../../src/firebase.config";
 
 // const useStyles = makeStyles({
 //   root: {
