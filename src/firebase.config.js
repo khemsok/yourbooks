@@ -12,5 +12,5 @@ if (!firebase.apps.length) {
   });
 }
 
-const auth = firebase.auth();
-export default auth;
+export const auth = firebase.auth();
+export const db = firebase.firestore();

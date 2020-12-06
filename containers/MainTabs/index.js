@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 // Context
 import { useAuth } from "../../context/AuthContext";
+import { DiscoverProvider } from "../../context/DiscoverContext";
 
 // MUI
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -82,7 +83,7 @@ export default function MainTabs() {
   console.log(value);
 
   return (
-    <>
+    <DiscoverProvider>
       {user ? (
         <>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: "30px" }}>
@@ -105,6 +106,6 @@ export default function MainTabs() {
           <DiscoverTab value={value} index={0} />
         </>
       )}
-    </>
+    </DiscoverProvider>
   );
 }

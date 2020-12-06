@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 
+// Component
+import DiscoverBooks from "./DiscoverBooks";
+
 // Context
+import { DiscoverProvider, useDiscover } from "../../context/DiscoverContext";
 import { useAuth } from "../../context/AuthContext";
 
 // MUI
@@ -13,9 +17,15 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Button from "@material-ui/core/Button";
 
+// MUI Icon
+import IconButton from "@material-ui/core/IconButton";
+import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+import AddIcon from "@material-ui/icons/Add";
+
 // util
 import moment from "moment";
 import { Loading } from "react-loading-dot";
+import { db } from "../../src/firebase.config";
 
 // const useStyles = makeStyles({
 //   root: {
@@ -75,8 +85,8 @@ const useStyles = makeStyles((theme) => ({
 
 function ReadMore({ children }) {
   const classes = useStyles();
+
   const [isHidden, setIsHidden] = useState(true);
-  console.log(children.length > 400);
   return (
     <>
       <div>
@@ -110,9 +120,11 @@ function TabPanel(props) {
 export default function DiscoverTab({ value, index }) {
   const classes = useStyles();
 
+  const { user } = useAuth();
+  const { discoverBooks, setDiscoverBooks, checkDocDetail, fetchDiscoverBooks } = useDiscover();
+
   const [bookList, setBookList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [discoverBooks, setDiscoverBooks] = useState([]);
 
   const fetchBooks = (value) => {
     if (value) {
@@ -137,62 +149,8 @@ export default function DiscoverTab({ value, index }) {
     }
   };
 
-  const fetchDiscoverBooks = () => {
-    const url = "https://www.googleapis.com/books/v1/volumes?q=sapiens&maxResults=2";
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        setDiscoverBooks(data.items);
-      })
-      .catch((err) => console.error(err));
-  };
-
-  useEffect(() => {
-    fetchDiscoverBooks();
-  }, []);
-
-  console.log(bookList);
-
-  const displayDetails = (publishedDate, categories, rating) => {
-    return [moment(publishedDate).format("YYYY"), categories.join(", "), rating ? `${rating}/5` : undefined].filter((el) => el !== undefined).join(" • ");
-  };
-
-  const displayDiscoverBooks = discoverBooks ? (
-    discoverBooks.map((book, index) => (
-      <div style={{ marginBottom: "30px" }} key={index}>
-        <div style={{ display: "flex" }}>
-          <div className={classes.discoverBooksThumbnailContainer}>
-            <img className={classes.discoverBooksThumbnail} src={book.volumeInfo.imageLinks.thumbnail} />
-          </div>
-
-          <div>
-            <Typography variant="h6" className={classes.discoverBooksTitle}>
-              {book.volumeInfo.title}
-            </Typography>
-            <Typography variant="body1" className={classes.discoverBooksAuthor}>
-              {book.volumeInfo.authors.join(", ")}
-            </Typography>
-
-            <Typography variant="body2" className={classes.discoverBooksDetail}>
-              {displayDetails(book.volumeInfo.publishedDate, book.volumeInfo.categories, book.volumeInfo.averageRating)}
-            </Typography>
-
-            <Typography variant="body2" className={classes.discoverBooksDescription}>
-              <ReadMore>{book.volumeInfo.description}</ReadMore>
-            </Typography>
-          </div>
-        </div>
-      </div>
-    ))
-  ) : (
-    <>
-      {/* <h1>loading</h1> */}
-      <Loading background="#000" size="1rem" duration=".6s" />
-    </>
-  );
-
   return (
-    <div>
+    <>
       <TabPanel value={value} index={index}>
         <Container maxWidth="xs" style={{ marginBottom: "70px" }}>
           {/* <TextField label="Search books..." fullWidth color="primary" /> */}
@@ -222,14 +180,14 @@ export default function DiscoverTab({ value, index }) {
               return option.volumeInfo && option.volumeInfo.title;
             }}
             loading={isLoading}
-            onChange={(e, v, r) => {
+            onChange={async (e, v, r) => {
               console.log(r);
               if (r === "clear") {
-                console.log("hello clear");
                 setBookList([]);
                 fetchDiscoverBooks();
               } else if (r === "select-option") {
-                setDiscoverBooks([v]);
+                let { read, docId } = await checkDocDetail(v.id);
+                setDiscoverBooks([{ book: v, read: !read, docId: docId }]);
               }
             }}
             onInputChange={(e, v, r) => {
@@ -258,8 +216,10 @@ export default function DiscoverTab({ value, index }) {
             )}
           />
         </Container>
-        <Container maxWidth="md">{displayDiscoverBooks}</Container>
+        <Container maxWidth="md">
+          <DiscoverBooks />
+        </Container>
       </TabPanel>
-    </div>
+    </>
   );
 }

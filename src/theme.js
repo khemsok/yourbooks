@@ -2,6 +2,9 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import { red } from "@material-ui/core/colors";
 
 const typographyObj = {
+  button: {
+    textTransform: "none",
+  },
   fontFamily: "Libre Franklin, sans-serif, Merriweather, serif",
   h1: {
     fontFamily: "Merriweather, serif",
