@@ -1,4 +1,5 @@
 // Context
+import { CurrentPageProvider } from "../context/CurrentPageContext";
 import { DiscoverProvider } from "../context/DiscoverContext";
 import { ReadingListProvider } from "../context/ReadingListContext";
 
@@ -12,11 +13,7 @@ export default function Home() {
   return (
     <>
       <Container maxWidth="lg">
-        <DiscoverProvider>
-          <ReadingListProvider>
-            <MainTabs />
-          </ReadingListProvider>
-        </DiscoverProvider>
+        <MainTabs />
       </Container>
     </>
   );

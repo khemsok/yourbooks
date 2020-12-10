@@ -1,4 +1,5 @@
 import { useState, useContext } from "react";
+import Link from "next/link";
 
 // MUI
 import Typography from "@material-ui/core/Typography";
@@ -15,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
     "& span": {
       fontWeight: "300",
     },
+    cursor: "pointer",
     [theme.breakpoints.down("md")]: {
       fontSize: "2em",
     },
@@ -93,9 +95,11 @@ export default function Navbar() {
     <>
       <div className={classes.mainTitleContainer}>
         <div>
-          <Typography variant="h1" className={classes.mainTitle}>
-            <span>YOUR</span>BOOKS
-          </Typography>
+          <Link href="/">
+            <Typography variant="h1" className={classes.mainTitle}>
+              <span>YOUR</span>BOOKS
+            </Typography>
+          </Link>
         </div>
         <div>
           <div className={classes.rightNavContainer}>

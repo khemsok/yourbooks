@@ -16,7 +16,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 // util
-import { TabPanel } from "../../util/reusableComponents";
+import { TabPanel, checkDocDetail } from "../../util/reusableComponents";
 
 // const useStyles = makeStyles({
 //   root: {
@@ -98,7 +98,7 @@ export default function DiscoverTab({ value, index }) {
   const classes = useStyles();
 
   const { user } = useAuth();
-  const { discoverBooks, setDiscoverBooks, checkDocDetail, fetchDiscoverBooks } = useDiscover();
+  const { discoverBooks, setDiscoverBooks, fetchDiscoverBooks } = useDiscover();
 
   const [bookList, setBookList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -163,7 +163,7 @@ export default function DiscoverTab({ value, index }) {
                 setBookList([]);
                 // fetchDiscoverBooks();
               } else if (r === "select-option") {
-                let { read, docId } = await checkDocDetail(v.id);
+                let { read, docId } = await checkDocDetail(v.id, user);
                 setDiscoverBooks([{ book: v, read: !read, docId: docId }]);
                 setBookList([]);
               }

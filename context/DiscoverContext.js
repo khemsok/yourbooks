@@ -5,6 +5,7 @@ import { useAuth } from "./AuthContext";
 
 // util
 import { db } from "../src/firebase.config";
+import { checkDocDetail } from "../util/reusableComponents";
 
 export const DiscoverContext = createContext(null);
 
@@ -16,33 +17,17 @@ export function DiscoverProvider({ children }) {
   const { user } = useAuth();
 
   const [discoverBooks, setDiscoverBooks] = useState([]);
-
-  const checkDocDetail = async (id) => {
-    if (user) {
-      const doc = await db.collection("books").where("bookId", "==", id).where("userId", "==", user.uid).limit(1).get();
-      const docId = !doc.empty ? doc.docs[0].id : "";
-      const docDetail = {
-        read: doc.empty,
-        docId: docId,
-      };
-      return docDetail;
-    } else {
-      return {
-        read: null,
-        docId: null,
-      };
-    }
-  };
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchDiscoverBooks = async () => {
+    setIsLoading(true);
     const url = "https://www.googleapis.com/books/v1/volumes?q=sapiens&maxResults=2";
     try {
       const res = await fetch(url);
       const data = await res.json();
       let books = [];
       for (const book of data.items) {
-        let { read, docId } = await checkDocDetail(book.id);
-        console.log(read, docId, book.volumeInfo.title, "check doc empty fetch inside of provider");
+        let { read, docId } = await checkDocDetail(book.id, user);
         books.push({
           book: book,
           read: !read,
@@ -50,8 +35,10 @@ export function DiscoverProvider({ children }) {
         });
       }
       setDiscoverBooks(books);
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
+      setIsLoading(false);
     }
   };
 
@@ -59,7 +46,9 @@ export function DiscoverProvider({ children }) {
     fetchDiscoverBooks();
   }, [user]);
 
-  const value = { discoverBooks, setDiscoverBooks, checkDocDetail, fetchDiscoverBooks: fetchDiscoverBooks };
+  console.log(discoverBooks, "discoverbooks");
+
+  const value = { discoverBooks, setDiscoverBooks, isLoading, fetchDiscoverBooks: fetchDiscoverBooks };
 
   return <DiscoverContext.Provider value={value}>{children}</DiscoverContext.Provider>;
 }

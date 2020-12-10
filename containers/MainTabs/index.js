@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useDiscover } from "../../context/DiscoverContext";
 import { useReadingList } from "../../context/ReadingListContext";
+import { useCurrentPage } from "../../context/CurrentPageContext";
 
 // MUI
 import { withStyles } from "@material-ui/core/styles";
@@ -13,6 +14,7 @@ import Tab from "@material-ui/core/Tab";
 // Components
 import DiscoverTab from "./DiscoverTab";
 import ReadingListTab from "./ReadingListTab";
+import FinishedBooksTab from "./FinishedBooksTab";
 
 const StyledTabs = withStyles((theme) => ({
   indicator: {
@@ -47,58 +49,32 @@ const StyledTab = withStyles((theme) => ({
 }))((props) => <Tab disableRipple {...props} />);
 
 export default function MainTabs() {
-  const [value, setValue] = useState(0);
-
-  const { fetchDiscoverBooks } = useDiscover();
-  const { fetchReadingList } = useReadingList();
-
   const { user } = useAuth();
-
-  const handleChange = (event, newValue) => {
-    if (user && newValue === 1) {
-      fetchDiscoverBooks();
-    } else if (!user && newValue === 0) {
-      fetchDiscoverBooks();
-    }
-    if (user && newValue === 0) {
-      fetchReadingList();
-    }
-    setValue(newValue);
-  };
-
-  useEffect(() => {
-    console.log(user, "from tabs");
-    if (user) {
-      setValue(1);
-    } else {
-      setValue(0);
-    }
-  }, [user]);
-
-  console.log(value);
+  const { currentTab, handleChangeTab } = useCurrentPage();
 
   return (
     <>
       {user ? (
         <>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: "30px" }}>
-            <StyledTabs value={value} onChange={handleChange}>
+            <StyledTabs value={currentTab} onChange={handleChangeTab}>
               <StyledTab label="Reading List" />
               <StyledTab label="Discover" />
               <StyledTab label="Finished Books" />
             </StyledTabs>
           </div>
-          <DiscoverTab value={value} index={1} />
-          <ReadingListTab value={value} index={0} />
+          <DiscoverTab value={currentTab} index={1} />
+          <ReadingListTab value={currentTab} index={0} />
+          <FinishedBooksTab value={currentTab} index={2} />
         </>
       ) : (
         <>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: "30px" }}>
-            <StyledTabs value={value} onChange={handleChange}>
+            <StyledTabs value={0} onChange={handleChangeTab}>
               <StyledTab label="Discover" />
             </StyledTabs>
           </div>
-          <DiscoverTab value={value} index={0} />
+          <DiscoverTab value={0} index={0} />
         </>
       )}
     </>

@@ -13,8 +13,8 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 // Context
+import CombinedContext from "../context/CombinedContext";
 import { ThemeContext } from "../context/ThemeContext";
-import { AuthProvider } from "../context/AuthContext";
 
 // util
 import "../styles/globals.css";
@@ -50,7 +50,7 @@ export default function MyApp(props) {
         <title>YourBooks</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
-      <AuthProvider>
+      <CombinedContext>
         <ThemeContext.Provider value={{ handleThemeChange, theme, setTheme }}>
           <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
@@ -61,7 +61,7 @@ export default function MyApp(props) {
             <Component {...pageProps} />
           </ThemeProvider>
         </ThemeContext.Provider>
-      </AuthProvider>
+      </CombinedContext>
     </React.Fragment>
   );
 }

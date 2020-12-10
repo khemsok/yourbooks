@@ -19,7 +19,7 @@ export function ReadingListProvider({ children }) {
 
   const fetchReadingList = async () => {
     if (user) {
-      const snapshot = await db.collection("books").where("userId", "==", user.uid).get();
+      const snapshot = await db.collection("books").where("userId", "==", user.uid).where("completeStatus", "==", false).get();
       if (!snapshot.empty) {
         let data = [];
         snapshot.forEach((doc) => {
@@ -29,8 +29,6 @@ export function ReadingListProvider({ children }) {
       }
     }
   };
-
-  console.log(readingList, "testing reading list");
 
   const value = { readingList, setReadingList, fetchReadingList: fetchReadingList };
   return <ReadingListContext.Provider value={value}>{children}</ReadingListContext.Provider>;

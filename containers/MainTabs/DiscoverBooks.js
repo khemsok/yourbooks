@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Link from "next/link";
 
 // Context
 import { useAuth } from "../../context/AuthContext";
@@ -14,8 +15,11 @@ import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 
 // util
+import { Loading } from "react-loading-dot";
+import BarLoader from "react-spinners/BarLoader";
 import moment from "moment";
 import { db } from "../../src/firebase.config";
+import { ReadMore, displayDetails } from "../../util/reusableComponents";
 
 const useStyles = makeStyles((theme) => ({
   hidden: {
@@ -36,6 +40,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   discoverBooksTitle: {
+    cursor: "pointer",
+    display: "inline-block",
     [theme.breakpoints.down("sm")]: {
       fontSize: "1em",
     },
@@ -76,35 +82,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ReadMore({ children }) {
-  const classes = useStyles();
-
-  const [isHidden, setIsHidden] = useState(true);
-  return (
-    <>
-      <div>
-        <div className={isHidden ? classes.hidden : null}>{children}</div>
-        <span>
-          {children.length > 400 ? (
-            <a style={{ cursor: "pointer", fontWeight: "700" }} onClick={() => setIsHidden(!isHidden)}>
-              {isHidden ? "(More)" : "(Less)"}
-            </a>
-          ) : null}
-        </span>
-      </div>
-    </>
-  );
-}
-
 export default function DiscoverBooks() {
   const classes = useStyles();
-  const { discoverBooks, setDiscoverBooks, checkDocDetail } = useDiscover();
+  const { discoverBooks, setDiscoverBooks, isLoading, checkDocDetail } = useDiscover();
   const { user } = useAuth();
 
-  const displayDetails = (publishedDate, categories, rating) => {
-    return [moment(publishedDate).format("YYYY"), categories && categories.join(", "), rating ? `${rating}/5` : undefined].filter((el) => el !== undefined).join(" • ");
-  };
-  const displayDiscoverBooks = discoverBooks ? (
+  const displayDiscoverBooks = !isLoading ? (
     discoverBooks.map(({ book, read, docId }, index) => (
       <div style={{ marginBottom: "30px" }} key={index}>
         <div style={{ display: "flex" }}>
@@ -113,10 +96,12 @@ export default function DiscoverBooks() {
           </div>
 
           <div>
-            <Typography variant="h6" className={classes.discoverBooksTitle}>
-              {book.volumeInfo.title}
-              {book.volumeInfo.subtitle && `: ${book.volumeInfo.subtitle}`}
-            </Typography>
+            <Link href={`/books?id=${book.id}`}>
+              <Typography variant="h6" className={classes.discoverBooksTitle}>
+                {book.volumeInfo.title}
+                {book.volumeInfo.subtitle && `: ${book.volumeInfo.subtitle}`}
+              </Typography>
+            </Link>
             <Typography variant="body1" className={classes.discoverBooksAuthor}>
               {book.volumeInfo.authors && book.volumeInfo.authors.join(", ")}
             </Typography>
@@ -172,6 +157,7 @@ export default function DiscoverBooks() {
                       end: "",
                       userId: user.uid,
                       rating: "",
+                      completeStatus: false,
                     });
                   }
 
@@ -203,10 +189,9 @@ export default function DiscoverBooks() {
       </div>
     ))
   ) : (
-    <>
-      {/* <h1>loading</h1> */}
-      <Loading background="#000" size="1rem" duration=".6s" />
-    </>
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <BarLoader color={"#000"} loading={isLoading} />
+    </div>
   );
   return <>{displayDiscoverBooks}</>;
 }
