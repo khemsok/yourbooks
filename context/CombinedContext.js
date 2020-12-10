@@ -7,13 +7,13 @@ import { CurrentPageProvider } from "./CurrentPageContext";
 export default function CombinedContext({ children }) {
   return (
     <AuthProvider>
-      <DiscoverProvider>
-        <ReadingListProvider>
-          <FinishedBooksProvider>
+      <FinishedBooksProvider>
+        <DiscoverProvider>
+          <ReadingListProvider>
             <CurrentPageProvider>{children}</CurrentPageProvider>
-          </FinishedBooksProvider>
-        </ReadingListProvider>
-      </DiscoverProvider>
+          </ReadingListProvider>
+        </DiscoverProvider>
+      </FinishedBooksProvider>
     </AuthProvider>
   );
 }
