@@ -83,8 +83,6 @@ export default function Books() {
   const [isLoadingNotes, setIsLoadingNotes] = useState(false);
   const [submitNotes, setSubmitNotes] = useState(false);
 
-  console.log(id, "testing id");
-
   const initialState = {
     id: id,
     data: null,
@@ -116,7 +114,6 @@ export default function Books() {
     async function fetchBookUserStatus() {
       try {
         const doc = await db.collection("books").where("bookId", "==", id).where("userId", "==", user.uid).limit(1).get();
-        console.log(doc.docs[0]);
         if (!doc.empty) {
           setBookUserStatus({ docId: doc.docs[0].id, data: doc.docs[0].data() });
           setNotesValue(doc.docs[0].data().notes);
@@ -132,10 +129,8 @@ export default function Books() {
     }
     fetchData();
     fetchBookUserStatus();
-  }, [id]);
+  }, [id, user]);
 
-  console.log(bookUserStatus, "book user status");
-  console.log({ data, isLoading, error }, "test reducer");
   return (
     <>
       <Container maxWidth="xl">
@@ -162,7 +157,7 @@ export default function Books() {
                 <Typography variant="body2">{data.volumeInfo.description ? <ReadMore>{data.volumeInfo.description}</ReadMore> : null}</Typography>
               </div>
             </div>
-            {bookUserStatus && Object.keys(bookUserStatus).length !== 0 ? (
+            {user && bookUserStatus && Object.keys(bookUserStatus).length !== 0 ? (
               <>
                 <TextField
                   fullWidth
