@@ -11,7 +11,7 @@ import { db } from "../src/firebase.config";
 const useStyles = makeStyles({
   hidden: {
     display: "-webkit-box",
-    WebkitLineClamp: 4,
+    WebkitLineClamp: 5,
     overflow: "hidden",
     WebkitBoxOrient: "vertical",
   },
