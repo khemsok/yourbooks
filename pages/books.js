@@ -130,7 +130,7 @@ export default function Books() {
     fetchData();
     fetchBookUserStatus();
   }, [id, user]);
-
+  console.log(data, "bookuserstatus");
   return (
     <>
       <Container maxWidth="xl">

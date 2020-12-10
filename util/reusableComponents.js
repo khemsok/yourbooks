@@ -38,7 +38,7 @@ export function ReadMore({ children }) {
   return (
     <>
       <div>
-        <div dangerouslySetInnerHTML={{ __html: children }} className={isHidden ? classes.hidden : null} />
+        <div dangerouslySetInnerHTML={{ __html: children.replace(/(<([^>]+)>)/gi, " ") }} className={isHidden ? classes.hidden : null} />
         <span>
           {children.length > 400 ? (
             <a style={{ cursor: "pointer", fontWeight: "700" }} onClick={() => setIsHidden(!isHidden)}>
