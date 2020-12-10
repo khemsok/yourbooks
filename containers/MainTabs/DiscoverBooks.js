@@ -158,6 +158,7 @@ export default function DiscoverBooks() {
                       userId: user.uid,
                       rating: "",
                       completeStatus: false,
+                      notes: "",
                     });
                   }
 

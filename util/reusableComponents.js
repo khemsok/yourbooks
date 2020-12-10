@@ -71,3 +71,12 @@ export const checkDocDetail = async (id, user = null) => {
     };
   }
 };
+
+export const checkDocExists = async (id, user = null) => {
+  if (user) {
+    const doc = await db.collection("books").where("bookId", "==", id).where("userId", "==", user.uid).limit(1).get();
+    return !doc.empty;
+  } else {
+    return false;
+  }
+};
