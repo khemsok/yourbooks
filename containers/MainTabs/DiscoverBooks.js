@@ -153,7 +153,7 @@ export default function DiscoverBooks() {
                     docRef = await db.collection("books").add({
                       bookId: book.id,
                       data: book.volumeInfo,
-                      start: new Date(),
+                      start: moment().format("YYYY-MM-DD"),
                       end: "",
                       userId: user.uid,
                       rating: "",
