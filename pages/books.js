@@ -15,13 +15,13 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import Rating from "@material-ui/lab/Rating";
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
-
+import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import { makeStyles } from "@material-ui/core/styles";
 
 // MUI Icons
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import IconButton from "@material-ui/core/IconButton";
+import ClearIcon from "@material-ui/icons/Clear";
 
 // util
 import BarLoader from "react-spinners/BarLoader";
@@ -224,39 +224,67 @@ export default function Books() {
                         setRating(value);
                       }}
                     />
-                    <div style={{ marginBottom: "20px" }}>
+                    <div style={{ marginBottom: "20px", display: "flex", alignItems: "flex-start", flexWrap: "wrap" }}>
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                          margin="none"
-                          // variant="inline"
-                          label="Start Date"
-                          format="MM/dd/yyyy"
-                          value={startDate}
-                          style={{ maxWidth: "150px", marginRight: "20px", fontSize: ".8em" }}
-                          onChange={async (date) => {
-                            const updateDate = moment(date).format("YYYY-MM-DD");
-                            await db.doc(`/books/${bookUserStatus.docId}`).update({ start: updateDate });
-                            setStartDate(updateDate);
-                          }}
-                          KeyboardButtonProps={{
-                            "aria-label": "change date",
-                          }}
-                        />
-                        <KeyboardDatePicker
-                          margin="none"
-                          label="End Date"
-                          format="MM/dd/yyyy"
-                          value={endDate}
-                          style={{ maxWidth: "150px" }}
-                          onChange={async (date) => {
-                            const updateDate = moment(date).format("YYYY-MM-DD");
-                            await db.doc(`/books/${bookUserStatus.docId}`).update({ end: updateDate });
-                            setEndDate(updateDate);
-                          }}
-                          KeyboardButtonProps={{
-                            "aria-label": "change date",
-                          }}
-                        />
+                        <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px", marginRight: "20px", fontSize: ".8em" }}>
+                          <DatePicker
+                            margin="none"
+                            // variant="inline"
+                            label="Start Date"
+                            format="MM/dd/yyyy"
+                            value={startDate}
+                            onChange={async (date) => {
+                              const updateDate = moment(date).format("YYYY-MM-DD");
+                              await db.doc(`/books/${bookUserStatus.docId}`).update({ start: updateDate });
+                              setStartDate(updateDate);
+                            }}
+                            KeyboardButtonProps={{
+                              "aria-label": "change date",
+                            }}
+                          />
+                          <IconButton
+                            // style={{ padding: 0 }}
+                            edge="end"
+                            size="small"
+                            disabled={!startDate}
+                            onClick={async () => {
+                              await db.doc(`/books/${bookUserStatus.docId}`).update({ start: null });
+                              setStartDate(null);
+                            }}
+                          >
+                            <ClearIcon />
+                          </IconButton>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px", fontSize: ".8em" }}>
+                          <DatePicker
+                            margin="none"
+                            label="End Date"
+                            format="MM/dd/yyyy"
+                            value={endDate}
+                            onChange={async (date) => {
+                              try {
+                                const updateDate = moment(date).format("YYYY-MM-DD");
+                                await db.doc(`/books/${bookUserStatus.docId}`).update({ end: updateDate, completeStatus: true });
+                                setEndDate(updateDate);
+                              } catch (e) {}
+                            }}
+                            KeyboardButtonProps={{
+                              "aria-label": "change date",
+                            }}
+                          />
+                          <IconButton
+                            // style={{ padding: 0 }}
+                            edge="end"
+                            size="small"
+                            disabled={!endDate}
+                            onClick={async () => {
+                              await db.doc(`/books/${bookUserStatus.docId}`).update({ end: null, completeStatus: false });
+                              setEndDate(null);
+                            }}
+                          >
+                            <ClearIcon />
+                          </IconButton>
+                        </div>
                       </MuiPickersUtilsProvider>
                     </div>
                   </>
