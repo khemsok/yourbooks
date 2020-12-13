@@ -98,6 +98,26 @@ const useStyles = makeStyles((theme) => ({
       fontSize: ".6em",
     },
   },
+  datePickerInput: {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: ".8em",
+    },
+  },
+  datePickerLabel: {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: ".8em",
+    },
+  },
+  textFieldInput: {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: ".95em",
+    },
+  },
+  textFieldLabel: {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "1em",
+    },
+  },
 }));
 
 function Alert(props) {
@@ -276,13 +296,15 @@ export default function Books() {
                     </div>
                     <div style={{ marginBottom: "20px", display: "flex", alignItems: "flex-start", flexWrap: "wrap" }}>
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px", marginRight: "20px", fontSize: ".8em" }}>
+                        <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px", marginRight: "20px" }}>
                           <DatePicker
                             margin="none"
                             // variant="inline"
                             label="Start Date"
                             format="MM/dd/yyyy"
                             value={startDate}
+                            InputProps={{ className: classes.datePickerInput }}
+                            InputLabelProps={{ className: classes.datePickerLabel }}
                             onChange={async (date) => {
                               const updateDate = moment(date).format("YYYY-MM-DD");
                               await db.doc(`/books/${bookUserStatus.docId}`).update({ start: updateDate });
@@ -311,6 +333,8 @@ export default function Books() {
                             label="End Date"
                             format="MM/dd/yyyy"
                             value={endDate}
+                            InputProps={{ className: classes.datePickerInput }}
+                            InputLabelProps={{ className: classes.datePickerLabel }}
                             onChange={async (date) => {
                               try {
                                 const updateDate = moment(date).format("YYYY-MM-DD");
@@ -355,8 +379,9 @@ export default function Books() {
                   variant="outlined"
                   defaultValue={notesValue}
                   rowsMax={15}
-                  InputLabelProps={{ style: {} }}
+                  InputLabelProps={{ className: classes.textFieldLabel }}
                   InputProps={{
+                    className: classes.textFieldInput,
                     endAdornment: isLoadingNotes ? (
                       <>
                         <InputAdornment position="start">
