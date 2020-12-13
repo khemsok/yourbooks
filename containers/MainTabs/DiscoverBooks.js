@@ -15,7 +15,6 @@ import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 
 // util
-import { Loading } from "react-loading-dot";
 import BarLoader from "react-spinners/BarLoader";
 import moment from "moment";
 import { db } from "../../src/firebase.config";

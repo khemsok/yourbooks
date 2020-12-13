@@ -318,8 +318,8 @@ export default function Books() {
                             InputLabelProps={{ className: classes.datePickerLabel }}
                             onChange={async (date) => {
                               const updateDate = moment(date).format("MM/DD/YYYY");
-                              await db.doc(`/books/${bookUserStatus.docId}`).update({ start: updateDate });
                               setStartDate(updateDate);
+                              await db.doc(`/books/${bookUserStatus.docId}`).update({ start: updateDate });
                             }}
                           />
                           <IconButton
@@ -346,8 +346,9 @@ export default function Books() {
                             onChange={async (date) => {
                               try {
                                 const updateDate = moment(date).format("MM/DD/YYYY");
-                                await db.doc(`/books/${bookUserStatus.docId}`).update({ end: updateDate, completeStatus: true });
                                 setEndDate(updateDate);
+
+                                await db.doc(`/books/${bookUserStatus.docId}`).update({ end: updateDate, completeStatus: true });
                               } catch (e) {}
                             }}
                           />
