@@ -327,7 +327,7 @@ export default function Books() {
                             <ClearIcon />
                           </IconButton>
                         </div>
-                        <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px", fontSize: ".8em" }}>
+                        <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px" }}>
                           <DatePicker
                             margin="none"
                             label="End Date"
