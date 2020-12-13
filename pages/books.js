@@ -115,12 +115,12 @@ const useStyles = makeStyles((theme) => ({
   },
   textFieldInput: {
     [theme.breakpoints.down("sm")]: {
-      fontSize: ".95em",
+      fontSize: "16px",
     },
   },
   textFieldLabel: {
     [theme.breakpoints.down("sm")]: {
-      fontSize: "1em",
+      fontSize: "1.3em",
     },
   },
   clearIcon: {
@@ -307,7 +307,7 @@ export default function Books() {
                     </div>
                     <div style={{ marginBottom: "20px", display: "flex", alignItems: "flex-start", flexWrap: "wrap" }}>
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px", marginRight: "20px" }}>
+                        <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px", marginRight: "20px" }} className={classes.startDatePicker}>
                           <DatePicker
                             margin="none"
                             // variant="inline"
@@ -321,7 +321,6 @@ export default function Books() {
                               await db.doc(`/books/${bookUserStatus.docId}`).update({ start: updateDate });
                               setStartDate(updateDate);
                             }}
-                            className={classes.startDatePicker}
                           />
                           <IconButton
                             // style={{ padding: 0 }}
