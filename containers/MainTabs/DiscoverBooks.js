@@ -110,7 +110,7 @@ export default function DiscoverBooks() {
               {displayDetails(book.volumeInfo.publishedDate, book.volumeInfo.categories, book.volumeInfo.averageRating)}
             </Typography>
 
-            {book.volumeInfo.description ? <ReadMore>{book.volumeInfo.description}</ReadMore> : null}
+            <div className={classes.discoverBooksDescription}>{book.volumeInfo.description ? <ReadMore>{book.volumeInfo.description}</ReadMore> : null}</div>
           </div>
         </div>
         {user ? (
