@@ -31,3 +31,9 @@ a {
 ::-webkit-scrollbar-thumb:active {
   background: rgba(0, 0, 0, 0.4);
 }
+
+input[type="text"],
+input[type="number"],
+textarea {
+  font-size: 16px;
+}
