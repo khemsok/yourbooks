@@ -62,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   discoverBooksDescription: {
+    fontSize: ".85em",
     [theme.breakpoints.down("sm")]: {
       fontSize: ".65em",
     },
@@ -151,7 +152,7 @@ export default function DiscoverBooks() {
                     docRef = await db.collection("books").add({
                       bookId: book.id,
                       data: book.volumeInfo,
-                      start: moment().format("YYYY-MM-DD"),
+                      start: moment().format("MM/DD/YYYY"),
                       end: "",
                       userId: user.uid,
                       rating: "",

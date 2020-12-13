@@ -317,7 +317,7 @@ export default function Books() {
                             InputProps={{ className: classes.datePickerInput }}
                             InputLabelProps={{ className: classes.datePickerLabel }}
                             onChange={async (date) => {
-                              const updateDate = moment(date).format("YYYY-MM-DD");
+                              const updateDate = moment(date).format("MM/DD/YYYY");
                               await db.doc(`/books/${bookUserStatus.docId}`).update({ start: updateDate });
                               setStartDate(updateDate);
                             }}
@@ -345,7 +345,7 @@ export default function Books() {
                             InputLabelProps={{ className: classes.datePickerLabel }}
                             onChange={async (date) => {
                               try {
-                                const updateDate = moment(date).format("YYYY-MM-DD");
+                                const updateDate = moment(date).format("MM/DD/YYYY");
                                 await db.doc(`/books/${bookUserStatus.docId}`).update({ end: updateDate, completeStatus: true });
                                 setEndDate(updateDate);
                               } catch (e) {}
