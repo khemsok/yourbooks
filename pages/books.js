@@ -98,6 +98,11 @@ const useStyles = makeStyles((theme) => ({
       fontSize: ".6em",
     },
   },
+  startDatePicker: {
+    [theme.breakpoints.down("sm")]: {
+      marginBottom: "10px",
+    },
+  },
   datePickerInput: {
     [theme.breakpoints.down("sm")]: {
       fontSize: ".8em",
@@ -297,6 +302,7 @@ export default function Books() {
                           await db.doc(`/books/${bookUserStatus.docId}`).update({ rating: value });
                           setRating(value);
                         }}
+                        name="rating"
                       />
                     </div>
                     <div style={{ marginBottom: "20px", display: "flex", alignItems: "flex-start", flexWrap: "wrap" }}>
@@ -315,9 +321,7 @@ export default function Books() {
                               await db.doc(`/books/${bookUserStatus.docId}`).update({ start: updateDate });
                               setStartDate(updateDate);
                             }}
-                            KeyboardButtonProps={{
-                              "aria-label": "change date",
-                            }}
+                            className={classes.startDatePicker}
                           />
                           <IconButton
                             // style={{ padding: 0 }}
@@ -347,9 +351,6 @@ export default function Books() {
                                 setEndDate(updateDate);
                               } catch (e) {}
                             }}
-                            KeyboardButtonProps={{
-                              "aria-label": "change date",
-                            }}
                           />
                           <IconButton
                             // style={{ padding: 0 }}
@@ -369,9 +370,7 @@ export default function Books() {
                   </>
                 ) : null}
 
-                <Typography variant="body2" className={classes.booksDescription}>
-                  {data.volumeInfo.description ? <ReadMore>{data.volumeInfo.description}</ReadMore> : null}
-                </Typography>
+                <div className={classes.booksDescription}>{data.volumeInfo.description ? <ReadMore>{data.volumeInfo.description}</ReadMore> : null}</div>
               </div>
             </div>
             {user && bookUserStatus && Object.keys(bookUserStatus).length !== 0 ? (

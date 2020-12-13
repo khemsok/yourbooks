@@ -37,16 +37,14 @@ export function ReadMore({ children }) {
   const [isHidden, setIsHidden] = useState(true);
   return (
     <>
-      <div>
-        <div dangerouslySetInnerHTML={{ __html: children.replace(/(<([^>]+)>)/gi, " ") }} className={isHidden ? classes.hidden : null} />
-        <span>
-          {children.length > 400 ? (
-            <a style={{ cursor: "pointer", fontWeight: "700" }} onClick={() => setIsHidden(!isHidden)}>
-              {isHidden ? "(More)" : "(Less)"}
-            </a>
-          ) : null}
-        </span>
-      </div>
+      <div dangerouslySetInnerHTML={{ __html: children.replace(/(<([^>]+)>)/gi, " ") }} className={isHidden ? classes.hidden : null} />
+      <span>
+        {children.length > 400 ? (
+          <a style={{ cursor: "pointer", fontWeight: "700" }} onClick={() => setIsHidden(!isHidden)}>
+            {isHidden ? "(More)" : "(Less)"}
+          </a>
+        ) : null}
+      </span>
     </>
   );
 }
