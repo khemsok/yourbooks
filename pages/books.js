@@ -28,7 +28,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 // util
 import BarLoader from "react-spinners/BarLoader";
 import { db } from "../src/firebase.config";
-import { ReadMore, displayDetails, estReadingTime, checkDocExists } from "../util/reusableComponents";
+import { ReadMore, displayDetails, estReadingTime, useIsMount, checkDocExists } from "../util/reusableComponents";
 import { isMobile } from "react-device-detect";
 import DateFnsUtils from "@date-io/date-fns";
 import moment from "moment";
@@ -105,7 +105,8 @@ function Alert(props) {
 }
 
 function Autosave({ docId, notesValue, setIsLoadingNotes }) {
-  const didMountRef = useRef(false);
+  // const didMountRef = useRef(false);
+  const isMount = useIsMount();
   const debouncedSave = useCallback(
     debounce(async (newNotesValue) => {
       console.log("hello am i firing?");
@@ -115,15 +116,13 @@ function Autosave({ docId, notesValue, setIsLoadingNotes }) {
       setTimeout(() => {
         setIsLoadingNotes(false);
       }, 1000);
-    }, 2000),
+    }, 1000),
     []
   );
 
   useEffect(() => {
-    if (didMountRef.current) {
+    if (!isMount) {
       debouncedSave(notesValue);
-    } else {
-      didMountRef.current = true;
     }
   }, [notesValue]);
 
@@ -361,7 +360,7 @@ export default function Books() {
                     endAdornment: isLoadingNotes ? (
                       <>
                         <InputAdornment position="start">
-                          <CircularProgress size="2em" />
+                          <CircularProgress size="1em" />
                         </InputAdornment>{" "}
                       </>
                     ) : null,

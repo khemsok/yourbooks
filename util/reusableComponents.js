@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 // MUI
 import Typography from "@material-ui/core/Typography";
@@ -90,4 +90,12 @@ export const estReadingTime = (pages) => {
   const minutes = time % 60;
 
   return `Est. Reading Time ${hours ? hours + " hours" : ""} ${minutes ? minutes + " minutes" : ""}  `;
+};
+
+export const useIsMount = () => {
+  const isMountRef = useRef(true);
+  useEffect(() => {
+    isMountRef.current = false;
+  }, []);
+  return isMountRef.current;
 };
