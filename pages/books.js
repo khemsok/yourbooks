@@ -118,6 +118,11 @@ const useStyles = makeStyles((theme) => ({
       fontSize: "1em",
     },
   },
+  clearIcon: {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: ".8em",
+    },
+  },
 }));
 
 function Alert(props) {
@@ -324,7 +329,7 @@ export default function Books() {
                               setStartDate(null);
                             }}
                           >
-                            <ClearIcon />
+                            <ClearIcon className={classes.clearIcon} />
                           </IconButton>
                         </div>
                         <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px" }}>
@@ -356,7 +361,7 @@ export default function Books() {
                               setEndDate(null);
                             }}
                           >
-                            <ClearIcon />
+                            <ClearIcon className={classes.clearIcon} />
                           </IconButton>
                         </div>
                       </MuiPickersUtilsProvider>
