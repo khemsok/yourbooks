@@ -80,3 +80,14 @@ export const checkDocExists = async (id, user = null) => {
     return false;
   }
 };
+
+export const estReadingTime = (pages) => {
+  const typicalPageLength = 300;
+  const wordPerMinute = 300;
+
+  const time = Math.ceil((pages * typicalPageLength) / wordPerMinute);
+  const hours = Math.ceil(time / 60);
+  const minutes = time % 60;
+
+  return `Est. Reading Time ${hours ? hours + " hours" : ""} ${minutes ? minutes + " minutes" : ""}  `;
+};

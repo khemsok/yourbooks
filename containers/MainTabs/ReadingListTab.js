@@ -15,6 +15,7 @@ function DisplayBook(props) {}
 
 export default function ReadingListTab({ value, index }) {
   const { readingList } = useReadingList();
+  console.log(readingList, "wtf");
   return (
     <TabPanel value={value} index={index} style={{ marginTop: "50px" }}>
       <Container maxWidth="md">

@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Router from "next/router";
@@ -15,8 +15,10 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import Rating from "@material-ui/lab/Rating";
+import Tooltip from "@material-ui/core/Tooltip";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import { makeStyles } from "@material-ui/core/styles";
+import InputAdornment from "@material-ui/core/InputAdornment";
 
 // MUI Icons
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
@@ -26,10 +28,11 @@ import ClearIcon from "@material-ui/icons/Clear";
 // util
 import BarLoader from "react-spinners/BarLoader";
 import { db } from "../src/firebase.config";
-import { ReadMore, displayDetails, checkDocExists } from "../util/reusableComponents";
+import { ReadMore, displayDetails, estReadingTime, checkDocExists } from "../util/reusableComponents";
 import { isMobile } from "react-device-detect";
 import DateFnsUtils from "@date-io/date-fns";
 import moment from "moment";
+import { debounce } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -86,10 +89,45 @@ const useStyles = makeStyles((theme) => ({
       fontSize: ".65em",
     },
   },
+  booksEstReadingTime: {
+    fontSize: ".85em",
+    marginBottom: "10px",
+    fontStyle: "italic",
+    display: "inline-block",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: ".6em",
+    },
+  },
 }));
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+function Autosave({ docId, notesValue, setIsLoadingNotes }) {
+  const didMountRef = useRef(false);
+  const debouncedSave = useCallback(
+    debounce(async (newNotesValue) => {
+      console.log("hello am i firing?");
+
+      setIsLoadingNotes(true);
+      await db.doc(`/books/${docId}`).update({ notes: newNotesValue });
+      setTimeout(() => {
+        setIsLoadingNotes(false);
+      }, 1000);
+    }, 2000),
+    []
+  );
+
+  useEffect(() => {
+    if (didMountRef.current) {
+      debouncedSave(notesValue);
+    } else {
+      didMountRef.current = true;
+    }
+  }, [notesValue]);
+
+  return null;
 }
 
 function booksReducer(state, action) {
@@ -186,10 +224,13 @@ export default function Books() {
     fetchBookUserStatus();
   }, [id, user]);
   console.log(bookUserStatus, "bookuserstatus");
+  console.log(data, "test data");
+
+  console.log(isLoadingNotes, "tesadfasdfasdf");
   return (
     <>
       <Container maxWidth="xl">
-        <IconButton onClick={() => Router.back()}>
+        <IconButton onClick={() => Router.back()} size={isMobile ? "small" : "medium"}>
           <ArrowBackIcon />
         </IconButton>
       </Container>
@@ -213,17 +254,27 @@ export default function Books() {
                   {displayDetails(data.volumeInfo.publishedDate, data.volumeInfo.categories, data.volumeInfo.averageRating)}
                 </Typography>
 
+                {data.volumeInfo.pageCount ? (
+                  <Tooltip title={`${data.volumeInfo.pageCount} pages`} placement="top">
+                    <Typography variant="body1" className={classes.booksEstReadingTime}>
+                      {estReadingTime(data.volumeInfo.pageCount)}
+                    </Typography>
+                  </Tooltip>
+                ) : null}
+
                 {user && bookUserStatus && Object.keys(bookUserStatus).length !== 0 ? (
                   <>
-                    <Rating
-                      value={rating}
-                      size="small"
-                      style={{ marginBottom: "10px" }}
-                      onChange={async (e, value) => {
-                        await db.doc(`/books/${bookUserStatus.docId}`).update({ rating: value });
-                        setRating(value);
-                      }}
-                    />
+                    <div>
+                      <Rating
+                        value={rating}
+                        size="small"
+                        style={{ marginBottom: "10px" }}
+                        onChange={async (e, value) => {
+                          await db.doc(`/books/${bookUserStatus.docId}`).update({ rating: value });
+                          setRating(value);
+                        }}
+                      />
+                    </div>
                     <div style={{ marginBottom: "20px", display: "flex", alignItems: "flex-start", flexWrap: "wrap" }}>
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px", marginRight: "20px", fontSize: ".8em" }}>
@@ -306,12 +357,22 @@ export default function Books() {
                   defaultValue={notesValue}
                   rowsMax={15}
                   InputLabelProps={{ style: {} }}
+                  InputProps={{
+                    endAdornment: isLoadingNotes ? (
+                      <>
+                        <InputAdornment position="start">
+                          <CircularProgress size="2em" />
+                        </InputAdornment>{" "}
+                      </>
+                    ) : null,
+                  }}
                   className={classes.booksNotes}
                   onChange={(e) => {
                     setNotesValue(e.target.value);
                   }}
                 />
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <Autosave docId={bookUserStatus.docId} notesValue={notesValue} setIsLoadingNotes={setIsLoadingNotes} />
+                {/* <div style={{ display: "flex", alignItems: "center" }}>
                   <div className={classes.wrapper}>
                     <Button
                       variant="contained"
@@ -325,16 +386,16 @@ export default function Books() {
                         setSubmitNotes(true);
                       }}
                     >
-                      Submit
+                      Save
                     </Button>
                     {isLoadingNotes && <CircularProgress size={24} className={classes.buttonProgress} />}
                   </div>
-                </div>
-                <Snackbar open={submitNotes} autoHideDuration={2000} onClose={handleClose}>
+                </div> */}
+                {/* <Snackbar open={submitNotes} autoHideDuration={2000} onClose={handleClose}>
                   <Alert onClose={handleClose} severity="info">
                     Successfully updated...
                   </Alert>
-                </Snackbar>
+                </Snackbar> */}
               </>
             ) : null}
           </>
