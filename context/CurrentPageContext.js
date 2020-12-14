@@ -38,12 +38,15 @@ export function CurrentPageProvider({ children }) {
   };
 
   useEffect(() => {
+    console.log("wtf");
     if (user) {
       setCurrentTab(1);
     } else {
       setCurrentTab(0);
     }
   }, [user]);
+
+  console.log(currentTab, "current tab");
 
   const value = { currentTab, handleChangeTab };
   return <CurrentPageContext.Provider value={value}>{children}</CurrentPageContext.Provider>;

@@ -14,6 +14,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 
 // Context
 import { AuthProvider } from "../context/AuthContext";
+import CombinedTabsProvider from "../context/CombinedTabsContext";
 import { ThemeContext } from "../context/ThemeContext";
 
 // util
@@ -51,16 +52,18 @@ export default function MyApp(props) {
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
       <AuthProvider>
-        <ThemeContext.Provider value={{ handleThemeChange, theme, setTheme }}>
-          <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
-            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-            <CssBaseline />
-            <Container maxWidth="xl">
-              <Navbar />
-            </Container>
-            <Component {...pageProps} />
-          </ThemeProvider>
-        </ThemeContext.Provider>
+        <CombinedTabsProvider>
+          <ThemeContext.Provider value={{ handleThemeChange, theme, setTheme }}>
+            <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
+              {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+              <CssBaseline />
+              <Container maxWidth="xl">
+                <Navbar />
+              </Container>
+              <Component {...pageProps} />
+            </ThemeProvider>
+          </ThemeContext.Provider>
+        </CombinedTabsProvider>
       </AuthProvider>
     </React.Fragment>
   );
