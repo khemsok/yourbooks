@@ -459,6 +459,7 @@ export default function Books() {
                   variant="outlined"
                   defaultValue={notesValue}
                   rowsMax={15}
+                  style={{ marginBottom: "10px" }}
                   InputLabelProps={{ className: classes.textFieldLabel }}
                   InputProps={{
                     className: classes.textFieldInput,
