@@ -53,6 +53,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: -12,
     marginLeft: -12,
   },
+  booksContainer: {
+    display: "flex",
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+    },
+  },
   booksThumbnailContainer: {
     minWidth: "170px",
     [theme.breakpoints.down("sm")]: {
@@ -62,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
   booksThumbnail: {
     [theme.breakpoints.down("sm")]: {
       maxWidth: "90px",
+      marginBottom: "10px",
     },
   },
   booksTitle: {
@@ -277,7 +284,7 @@ export default function Books() {
   // console.log(isLoadingNotes, "tesadfasdfasdf");
   return (
     <>
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" style={{ marginBottom: "10px" }}>
         <IconButton onClick={() => Router.back()} size={isMobile ? "small" : "medium"}>
           <ArrowBackIcon />
         </IconButton>
@@ -285,7 +292,7 @@ export default function Books() {
       <Container maxWidth="md">
         {!isLoading ? (
           <>
-            <div style={{ display: "flex" }}>
+            <div className={classes.booksContainer}>
               <div className={classes.booksThumbnailContainer}>
                 <img src={data.volumeInfo.imageLinks && data.volumeInfo.imageLinks.thumbnail} className={classes.booksThumbnail} />
               </div>
