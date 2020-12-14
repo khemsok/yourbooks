@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Component
 import DiscoverBooks from "./DiscoverBooks";
@@ -125,6 +125,10 @@ export default function DiscoverTab({ value, index }) {
       setBookList([]);
     }
   };
+
+  useEffect(() => {
+    fetchDiscoverBooks();
+  }, []);
 
   return (
     <>

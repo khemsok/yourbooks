@@ -2,7 +2,7 @@ import { useState, useEffect, createContext, useContext } from "react";
 
 // Context
 import { useAuth } from "./AuthContext";
-import { DiscoverProvider } from "./DiscoverContext";
+import { DiscoverProvider, useDiscover } from "./DiscoverContext";
 import { ReadingListProvider, useReadingList } from "./ReadingListContext";
 import { useFinishedBooks } from "./FinishedBooksContext";
 
@@ -19,14 +19,15 @@ export function CurrentPageProvider({ children }) {
   const { user } = useAuth();
   const { fetchReadingList } = useReadingList();
   const { fetchFinishedBooks } = useFinishedBooks();
+  const { fetchDiscoverBooks } = useDiscover();
 
   const [currentTab, setCurrentTab] = useState(null);
 
   const handleChangeTab = (event, newValue) => {
     if (user && newValue === 1) {
-      // fetchDiscoverBooks();
+      fetchDiscoverBooks();
     } else if (!user && newValue === 0) {
-      // fetchDiscoverBooks();
+      fetchDiscoverBooks();
     }
     if (user && newValue === 0) {
       fetchReadingList();

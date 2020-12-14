@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Link from "next/link";
 
 // Context
@@ -15,7 +16,12 @@ import BarLoader from "react-spinners/BarLoader";
 function DisplayBook(props) {}
 
 export default function ReadingListTab({ value, index }) {
-  const { readingList, isLoading } = useReadingList();
+  const { readingList, isLoading, fetchReadingList } = useReadingList();
+
+  useEffect(() => {
+    fetchReadingList();
+  }, []);
+
   return (
     <TabPanel value={value} index={index} style={{ marginTop: "50px" }}>
       <Container maxWidth="md">
