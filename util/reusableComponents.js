@@ -24,7 +24,7 @@ export function TabPanel(props) {
     <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
       {value === index && (
         <>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
         </>
       )}
     </div>
@@ -88,12 +88,4 @@ export const estReadingTime = (pages) => {
   const minutes = time % 60;
 
   return `Est. Reading Time ${hours ? hours + " hours" : ""} ${minutes ? minutes + " minutes" : ""}  `;
-};
-
-export const useIsMount = () => {
-  const isMountRef = useRef(true);
-  useEffect(() => {
-    isMountRef.current = false;
-  }, []);
-  return isMountRef.current;
 };

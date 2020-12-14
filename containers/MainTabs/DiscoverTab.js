@@ -130,7 +130,6 @@ export default function DiscoverTab({ value, index }) {
     <>
       <TabPanel value={value} index={index}>
         <Container maxWidth="xs" style={{ marginBottom: "70px" }}>
-          {/* <TextField label="Search books..." fullWidth color="primary" /> */}
           <Autocomplete
             color="primary"
             fullWidth

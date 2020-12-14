@@ -28,7 +28,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 // util
 import BarLoader from "react-spinners/BarLoader";
 import { db } from "../src/firebase.config";
-import { ReadMore, displayDetails, estReadingTime, useIsMount, checkDocExists } from "../util/reusableComponents";
+import { ReadMore, displayDetails, estReadingTime } from "../util/reusableComponents";
 import { isMobile } from "react-device-detect";
 import DateFnsUtils from "@date-io/date-fns";
 import moment from "moment";
@@ -135,8 +135,9 @@ function Alert(props) {
 }
 
 function Autosave({ docId, notesValue, setIsLoadingNotes }) {
-  // const didMountRef = useRef(false);
-  const isMount = useIsMount();
+  const didMountRef = useRef(false);
+  console.log(didMountRef.current, "testing ref");
+
   const debouncedSave = useCallback(
     debounce(async (newNotesValue) => {
       console.log("hello am i firing?");
@@ -151,8 +152,12 @@ function Autosave({ docId, notesValue, setIsLoadingNotes }) {
   );
 
   useEffect(() => {
-    if (!isMount) {
+    console.log("am i in here?");
+
+    if (didMountRef.current) {
       debouncedSave(notesValue);
+    } else {
+      didMountRef.current = true;
     }
   }, [notesValue]);
 
@@ -250,12 +255,15 @@ export default function Books() {
       }
     }
     fetchData();
-    fetchBookUserStatus();
-  }, [id, user]);
-  console.log(bookUserStatus, "bookuserstatus");
-  console.log(data, "test data");
 
-  console.log(isLoadingNotes, "tesadfasdfasdf");
+    if (user) {
+      fetchBookUserStatus();
+    }
+  }, [id, user]);
+  // console.log(bookUserStatus, "bookuserstatus");
+  // console.log(data, "test data");
+
+  // console.log(isLoadingNotes, "tesadfasdfasdf");
   return (
     <>
       <Container maxWidth="xl">

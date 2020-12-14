@@ -1,7 +1,5 @@
 // Context
-import { CurrentPageProvider } from "../context/CurrentPageContext";
-import { DiscoverProvider } from "../context/DiscoverContext";
-import { ReadingListProvider } from "../context/ReadingListContext";
+import CombinedTabsProvider from "../context/CombinedTabsContext";
 
 // Containers
 import MainTabs from "../containers/MainTabs";
@@ -11,10 +9,10 @@ import Container from "@material-ui/core/Container";
 
 export default function Home() {
   return (
-    <>
+    <CombinedTabsProvider>
       <Container maxWidth="lg">
         <MainTabs />
       </Container>
-    </>
+    </CombinedTabsProvider>
   );
 }

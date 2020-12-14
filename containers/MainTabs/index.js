@@ -52,21 +52,25 @@ export default function MainTabs() {
   const { user } = useAuth();
   const { currentTab, handleChangeTab } = useCurrentPage();
 
+  console.log(currentTab, "testing123");
+
   return (
     <>
       {user ? (
-        <>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: "30px" }}>
-            <StyledTabs value={currentTab} onChange={handleChangeTab}>
-              <StyledTab label="Reading List" />
-              <StyledTab label="Discover" />
-              <StyledTab label="Finished Books" />
-            </StyledTabs>
-          </div>
-          <DiscoverTab value={currentTab} index={1} />
-          <ReadingListTab value={currentTab} index={0} />
-          <FinishedBooksTab value={currentTab} index={2} />
-        </>
+        currentTab !== null ? (
+          <>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: "30px" }}>
+              <StyledTabs value={currentTab} onChange={handleChangeTab}>
+                <StyledTab label="Reading List" />
+                <StyledTab label="Discover" />
+                <StyledTab label="Finished Books" />
+              </StyledTabs>
+            </div>
+            <DiscoverTab value={currentTab} index={1} />
+            <ReadingListTab value={currentTab} index={0} />
+            <FinishedBooksTab value={currentTab} index={2} />
+          </>
+        ) : null
       ) : (
         <>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: "30px" }}>

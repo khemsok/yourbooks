@@ -14,11 +14,13 @@ export function useReadingList() {
 
 export function ReadingListProvider({ children }) {
   const [readingList, setReadingList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { user } = useAuth();
 
   const fetchReadingList = async () => {
     if (user) {
+      setIsLoading(true);
       const snapshot = await db.collection("books").where("userId", "==", user.uid).where("completeStatus", "==", false).get();
       if (!snapshot.empty) {
         let data = [];
@@ -27,9 +29,10 @@ export function ReadingListProvider({ children }) {
         });
         setReadingList(data);
       }
+      setIsLoading(false);
     }
   };
 
-  const value = { readingList, setReadingList, fetchReadingList: fetchReadingList };
+  const value = { readingList, setReadingList, fetchReadingList, isLoading };
   return <ReadingListContext.Provider value={value}>{children}</ReadingListContext.Provider>;
 }
