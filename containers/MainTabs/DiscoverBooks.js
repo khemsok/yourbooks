@@ -18,7 +18,7 @@ import RemoveIcon from "@material-ui/icons/Remove";
 import BarLoader from "react-spinners/BarLoader";
 import moment from "moment";
 import { db } from "../../src/firebase.config";
-import { ReadMore, displayDetails } from "../../util/reusableComponents";
+import { ReadMore, displayDetails, RemoveBookAlert } from "../../util/reusableComponents";
 
 const useStyles = makeStyles((theme) => ({
   hidden: {
@@ -87,6 +87,10 @@ export default function DiscoverBooks() {
   const { discoverBooks, setDiscoverBooks, isLoading, checkDocDetail } = useDiscover();
   const { user } = useAuth();
 
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertBook, setAlertBook] = useState(null);
+  const [alertDocId, setAlertDocId] = useState(null);
+
   const displayDiscoverBooks = !isLoading ? (
     discoverBooks.map(({ book, read, docId }, index) => (
       <div style={{ marginBottom: "30px" }} key={index}>
@@ -119,20 +123,10 @@ export default function DiscoverBooks() {
               <Button
                 onClick={async () => {
                   console.log(book.docId);
-                  await db.doc(`/books/${docId}`).delete();
-                  setDiscoverBooks((books) =>
-                    books.map((curBook) => {
-                      if (curBook.book.id === book.id) {
-                        return {
-                          book: curBook.book,
-                          read: false,
-                          docId: "",
-                        };
-                      } else {
-                        return curBook;
-                      }
-                    })
-                  );
+                  setAlertBook(book);
+                  setAlertOpen(true);
+                  setAlertDocId(docId);
+                  // await db.doc(`/books/${docId}`).delete();
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -185,6 +179,7 @@ export default function DiscoverBooks() {
             )}
           </div>
         ) : null}
+        <RemoveBookAlert componentType="discover" open={alertOpen} setOpen={setAlertOpen} books={discoverBooks} book={alertBook} setDiscoverBooks={setDiscoverBooks} docId={alertDocId} />
       </div>
     ))
   ) : (

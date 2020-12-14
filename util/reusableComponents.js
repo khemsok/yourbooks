@@ -96,37 +96,61 @@ export const estReadingTime = (pages) => {
   return `Est. Reading Time ${hours ? hours + " hours" : ""} ${minutes ? minutes + " minutes" : ""}  `;
 };
 
-export const RemoveBookAlert = ({ open, setOpen, bookUserStatus, fetchBookUserStatus }) => {
+export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, bookUserStatus, fetchBookUserStatus, componentType }) => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const deleteFromDiscover = async () => {
+    try {
+      await db.doc(`/books/${docId}`).delete();
+      setDiscoverBooks((books) =>
+        books.map((curBook) => {
+          if (curBook.book.id === book.id) {
+            return {
+              book: curBook.book,
+              read: false,
+              docId: "",
+            };
+          } else {
+            return curBook;
+          }
+        })
+      );
+      handleClose();
+    } catch (e) {
+      console.error(e);
+      handleClose();
+    }
+  };
+
+  const deleteFromBooks = async () => {
+    try {
+      await db.doc(`/books/${bookUserStatus.docId}`).delete();
+      await fetchBookUserStatus();
+      handleClose();
+    } catch (e) {
+      console.error(e);
+
+      handleClose();
+    }
+  };
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Are you sure you want to delete this book?</DialogTitle>
-      <DialogContent>
-        <DialogContentText>Once delete, you cannot recover the saved data.</DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          No
-        </Button>
-        <Button
-          onClick={async () => {
-            try {
-              await db.doc(`/books/${bookUserStatus.docId}`).delete();
-              await fetchBookUserStatus();
-              handleClose();
-            } catch (e) {
-              console.error(e);
-              handleClose();
-            }
-          }}
-          color="primary"
-          autoFocus
-        >
-          Yes
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <div>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Are you sure you want to delete this book?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Once delete, you cannot recover the saved data.</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            No
+          </Button>
+          <Button onClick={componentType === "books" ? deleteFromBooks : deleteFromDiscover} color="primary" autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 };

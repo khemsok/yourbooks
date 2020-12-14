@@ -472,7 +472,7 @@ export default function Books() {
               </>
             ) : null}
             <>
-              <RemoveBookAlert open={alertOpen} setOpen={setAlertOpen} bookUserStatus={bookUserStatus} fetchBookUserStatus={fetchBookUserStatus} />
+              <RemoveBookAlert open={alertOpen} setOpen={setAlertOpen} bookUserStatus={bookUserStatus} fetchBookUserStatus={fetchBookUserStatus} componentType="books" />
             </>
           </>
         ) : (
