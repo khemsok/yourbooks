@@ -96,7 +96,7 @@ export const estReadingTime = (pages) => {
   return `Est. Reading Time ${hours ? hours + " hours" : ""} ${minutes ? minutes + " minutes" : ""}  `;
 };
 
-export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, bookUserStatus, fetchBookUserStatus, componentType }) => {
+export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, bookUserStatus, fetchBookUserStatus, componentType, fetchReadingList }) => {
   const handleClose = () => {
     setOpen(false);
   };
@@ -135,6 +135,18 @@ export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, 
       handleClose();
     }
   };
+
+  const deleteFromReadingList = async () => {
+    try {
+      await db.doc(`/books/${docId}`).delete();
+      await fetchReadingList();
+      handleClose();
+    } catch (e) {
+      console.error(e);
+
+      handleClose();
+    }
+  };
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
@@ -146,7 +158,7 @@ export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, 
           <Button onClick={handleClose} color="primary">
             No
           </Button>
-          <Button onClick={componentType === "books" ? deleteFromBooks : deleteFromDiscover} color="primary" autoFocus>
+          <Button onClick={componentType === "books" ? deleteFromBooks : componentType === "readinglist" ? deleteFromReadingList : deleteFromDiscover} color="primary" autoFocus>
             Yes
           </Button>
         </DialogActions>

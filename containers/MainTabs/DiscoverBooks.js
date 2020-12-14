@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   discoverBooksThumbnail: {
+    cursor: "pointer",
     [theme.breakpoints.down("sm")]: {
       maxWidth: "90px",
     },
@@ -96,7 +97,9 @@ export default function DiscoverBooks() {
       <div style={{ marginBottom: "30px" }} key={index}>
         <div style={{ display: "flex" }}>
           <div className={classes.discoverBooksThumbnailContainer}>
-            <img className={classes.discoverBooksThumbnail} src={book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail} />
+            <Link href={`/books?id=${book.id}`}>
+              <img className={classes.discoverBooksThumbnail} src={book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : "/no_cover.svg"} />
+            </Link>
           </div>
 
           <div>

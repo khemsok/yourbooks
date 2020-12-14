@@ -17,11 +17,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
 
 // MUI Icons
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
@@ -161,10 +156,15 @@ function Autosave({ docId, notesValue, setIsLoadingNotes }) {
   const debouncedSave = useCallback(
     debounce(async (newNotesValue) => {
       setIsLoadingNotes(true);
-      await db.doc(`/books/${docId}`).update({ notes: newNotesValue });
-      setTimeout(() => {
+      try {
+        await db.doc(`/books/${docId}`).update({ notes: newNotesValue });
+        setTimeout(() => {
+          setIsLoadingNotes(false);
+        }, 1000);
+      } catch (e) {
+        console.error(e);
         setIsLoadingNotes(false);
-      }, 1000);
+      }
     }, 1000),
     []
   );
@@ -294,7 +294,7 @@ export default function Books() {
           <>
             <div className={classes.booksContainer}>
               <div className={classes.booksThumbnailContainer}>
-                <img src={data.volumeInfo.imageLinks && data.volumeInfo.imageLinks.thumbnail} className={classes.booksThumbnail} />
+                <img src={data.volumeInfo.imageLinks ? data.volumeInfo.imageLinks.thumbnail : "/no_cover.svg"} className={classes.booksThumbnail} />
               </div>
               <div>
                 <Typography variant="h6" className={classes.booksTitle}>
