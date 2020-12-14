@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
   },
   booksThumbnail: {
     [theme.breakpoints.down("sm")]: {
-      maxWidth: "120px",
+      maxWidth: "100px",
       marginBottom: "10px",
     },
   },
