@@ -454,7 +454,7 @@ export default function Books() {
                 <TextField
                   fullWidth
                   multiline
-                  rows={isMobile ? 1 : 4}
+                  rows={isMobile ? 2 : 4}
                   label="Notes"
                   variant="outlined"
                   defaultValue={notesValue}
