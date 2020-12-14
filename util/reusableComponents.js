@@ -3,6 +3,12 @@ import { useState, useRef, useEffect } from "react";
 // MUI
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Button from "@material-ui/core/Button";
 
 // util
 import moment from "moment";
@@ -88,4 +94,39 @@ export const estReadingTime = (pages) => {
   const minutes = time % 60;
 
   return `Est. Reading Time ${hours ? hours + " hours" : ""} ${minutes ? minutes + " minutes" : ""}  `;
+};
+
+export const RemoveBookAlert = ({ open, setOpen, bookUserStatus, fetchBookUserStatus }) => {
+  const handleClose = () => {
+    setOpen(false);
+  };
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>Are you sure you want to delete this book?</DialogTitle>
+      <DialogContent>
+        <DialogContentText>Once delete, you cannot recover the saved data.</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          No
+        </Button>
+        <Button
+          onClick={async () => {
+            try {
+              await db.doc(`/books/${bookUserStatus.docId}`).delete();
+              await fetchBookUserStatus();
+              handleClose();
+            } catch (e) {
+              console.error(e);
+              handleClose();
+            }
+          }}
+          color="primary"
+          autoFocus
+        >
+          Yes
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 };

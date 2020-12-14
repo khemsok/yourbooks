@@ -12,23 +12,28 @@ import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
 import Rating from "@material-ui/lab/Rating";
 import Tooltip from "@material-ui/core/Tooltip";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
 // MUI Icons
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
+import AddIcon from "@material-ui/icons/Add";
+import RemoveIcon from "@material-ui/icons/Remove";
 
 // util
 import BarLoader from "react-spinners/BarLoader";
 import { db } from "../src/firebase.config";
-import { ReadMore, displayDetails, estReadingTime } from "../util/reusableComponents";
+import { ReadMore, displayDetails, estReadingTime, RemoveBookAlert } from "../util/reusableComponents";
 import { isMobile } from "react-device-detect";
 import DateFnsUtils from "@date-io/date-fns";
 import moment from "moment";
@@ -128,20 +133,26 @@ const useStyles = makeStyles((theme) => ({
       fontSize: ".8em",
     },
   },
+  readingList: {
+    fontSize: ".8em",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: ".65em",
+    },
+  },
+  readingIcon: {
+    fontSize: "1em",
+    marginRight: "3px",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: ".8em",
+    },
+  },
 }));
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
 function Autosave({ docId, notesValue, setIsLoadingNotes }) {
   const didMountRef = useRef(false);
-  console.log(didMountRef.current, "testing ref");
 
   const debouncedSave = useCallback(
     debounce(async (newNotesValue) => {
-      console.log("hello am i firing?");
-
       setIsLoadingNotes(true);
       await db.doc(`/books/${docId}`).update({ notes: newNotesValue });
       setTimeout(() => {
@@ -152,8 +163,6 @@ function Autosave({ docId, notesValue, setIsLoadingNotes }) {
   );
 
   useEffect(() => {
-    console.log("am i in here?");
-
     if (didMountRef.current) {
       debouncedSave(notesValue);
     } else {
@@ -204,6 +213,7 @@ export default function Books() {
   const [rating, setRating] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const initialState = {
     id: id,
@@ -221,39 +231,40 @@ export default function Books() {
 
     setSubmitNotes(false);
   };
-
-  useEffect(() => {
-    async function fetchData() {
-      dispatch({ type: "FETCH_REQUEST" });
-      try {
-        const res = await fetch(`https://www.googleapis.com/books/v1/volumes/${id}`);
-        const data = await res.json();
-        dispatch({ type: "FETCH_SUCCESS", payload: data });
-      } catch (err) {
-        dispatch({ type: "FETCH_FAILURE", payload: err });
-      }
+  async function fetchData() {
+    dispatch({ type: "FETCH_REQUEST" });
+    try {
+      const res = await fetch(`https://www.googleapis.com/books/v1/volumes/${id}`);
+      const data = await res.json();
+      dispatch({ type: "FETCH_SUCCESS", payload: data });
+    } catch (err) {
+      dispatch({ type: "FETCH_FAILURE", payload: err });
     }
-    async function fetchBookUserStatus() {
-      try {
-        const doc = await db.collection("books").where("bookId", "==", id).where("userId", "==", user.uid).limit(1).get();
-        if (!doc.empty) {
-          setBookUserStatus({ docId: doc.docs[0].id, data: doc.docs[0].data() });
-          setNotesValue(doc.docs[0].data().notes);
-          setRating(doc.docs[0].data().rating ? doc.docs[0].data().rating : null);
-          setStartDate(doc.docs[0].data().start ? doc.docs[0].data().start : null);
-          setEndDate(doc.docs[0].data().end ? doc.docs[0].data().end : null);
-        } else {
-          setBookUserStatus(null);
-          setNotesValue("");
-          setRating(null);
-        }
-      } catch (e) {
-        console.error(e);
+  }
+
+  async function fetchBookUserStatus() {
+    try {
+      const doc = await db.collection("books").where("bookId", "==", id).where("userId", "==", user.uid).limit(1).get();
+      if (!doc.empty) {
+        setBookUserStatus({ docId: doc.docs[0].id, data: doc.docs[0].data() });
+        setNotesValue(doc.docs[0].data().notes);
+        setRating(doc.docs[0].data().rating ? doc.docs[0].data().rating : null);
+        setStartDate(doc.docs[0].data().start ? doc.docs[0].data().start : null);
+        setEndDate(doc.docs[0].data().end ? doc.docs[0].data().end : null);
+      } else {
         setBookUserStatus(null);
         setNotesValue("");
         setRating(null);
       }
+    } catch (e) {
+      console.error(e);
+      setBookUserStatus(null);
+      setNotesValue("");
+      setRating(null);
     }
+  }
+
+  useEffect(() => {
     fetchData();
 
     if (user) {
@@ -381,6 +392,56 @@ export default function Books() {
                 <div className={classes.booksDescription}>{data.volumeInfo.description ? <ReadMore>{data.volumeInfo.description}</ReadMore> : null}</div>
               </div>
             </div>
+            {user ? (
+              <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
+                {bookUserStatus ? (
+                  <Button
+                    onClick={async () => {
+                      setAlertOpen(true);
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <RemoveIcon className={classes.readingIcon} />
+                      <Typography variant="body2" className={classes.readingList}>
+                        Remove from Reading List
+                      </Typography>
+                    </div>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={async () => {
+                      try {
+                        const doc = await db.collection("books").where("bookId", "==", data.id).where("userId", "==", user.uid).limit(1).get();
+                        if (doc.empty) {
+                          await db.collection("books").add({
+                            bookId: data.id,
+                            data: data.volumeInfo,
+                            start: moment().format("MM/DD/YYYY"),
+                            end: "",
+                            userId: user.uid,
+                            rating: "",
+                            completeStatus: false,
+                            notes: "",
+                          });
+                          await fetchBookUserStatus();
+                        }
+                      } catch (e) {
+                        console.error(e);
+                      }
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <AddIcon className={classes.readingIcon} />
+                      <Typography variant="body2" className={classes.readingList}>
+                        Add to Reading List
+                      </Typography>
+                    </div>
+                  </Button>
+                )}
+              </div>
+            ) : null}
+
+            {/* </div> */}
             {user && bookUserStatus && Object.keys(bookUserStatus).length !== 0 ? (
               <>
                 <TextField
@@ -408,32 +469,11 @@ export default function Books() {
                   }}
                 />
                 <Autosave docId={bookUserStatus.docId} notesValue={notesValue} setIsLoadingNotes={setIsLoadingNotes} />
-                {/* <div style={{ display: "flex", alignItems: "center" }}>
-                  <div className={classes.wrapper}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      disabled={isLoadingNotes}
-                      onClick={async () => {
-                        setIsLoadingNotes(true);
-                        setSubmitNotes(false);
-                        await db.doc(`/books/${bookUserStatus.docId}`).update({ notes: notesValue });
-                        setIsLoadingNotes(false);
-                        setSubmitNotes(true);
-                      }}
-                    >
-                      Save
-                    </Button>
-                    {isLoadingNotes && <CircularProgress size={24} className={classes.buttonProgress} />}
-                  </div>
-                </div> */}
-                {/* <Snackbar open={submitNotes} autoHideDuration={2000} onClose={handleClose}>
-                  <Alert onClose={handleClose} severity="info">
-                    Successfully updated...
-                  </Alert>
-                </Snackbar> */}
               </>
             ) : null}
+            <>
+              <RemoveBookAlert open={alertOpen} setOpen={setAlertOpen} bookUserStatus={bookUserStatus} fetchBookUserStatus={fetchBookUserStatus} />
+            </>
           </>
         ) : (
           <div style={{ display: "flex", justifyContent: "center" }}>
