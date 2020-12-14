@@ -9,14 +9,16 @@ import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import Pagination from "@material-ui/lab/Pagination";
 import { makeStyles } from "@material-ui/core/styles";
 
 // MUI  Icon
 import RemoveIcon from "@material-ui/icons/Remove";
 
 // util
-import { TabPanel, RemoveBookAlert } from "../../util/reusableComponents";
+import { TabPanel, RemoveBookAlert, paginate } from "../../util/reusableComponents";
 import BarLoader from "react-spinners/BarLoader";
+import { isMobile } from "react-device-detect";
 
 const useStyles = makeStyles((theme) => ({
   readingList: {
@@ -40,6 +42,7 @@ export default function ReadingListTab({ value, index }) {
 
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertDocId, setAlertDocId] = useState(null);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetchReadingList();
@@ -49,12 +52,12 @@ export default function ReadingListTab({ value, index }) {
 
   return (
     <TabPanel value={value} index={index} style={{ marginTop: "50px" }}>
-      <Container maxWidth="md">
+      <Container maxWidth="md" style={{ minHeight: "50vh", position: "relative" }}>
         {!isLoading ? (
           <Grid container spacing={8}>
-            {readingList.map((book, index) => (
+            {paginate(readingList, 6, page).map((book, index) => (
               <Grid item xs={12} md={4} key={index}>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", height: "100%" }}>
                   <div style={{}}>
                     <Link href={`/books?id=${book.data.bookId}`}>
                       <img src={book.data.data.imageLinks ? book.data.data.imageLinks.thumbnail : "/no_cover.svg"} style={{ maxWidth: "100px", marginRight: "20px", cursor: "pointer" }} />
@@ -99,6 +102,16 @@ export default function ReadingListTab({ value, index }) {
             <BarLoader color={"#000"} loading={isLoading} />
           </div>
         )}
+        {!isLoading && readingList && readingList.length > 6 && !isMobile ? (
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "auto", position: "absolute", bottom: "0", left: "50%", transform: "translateX(-50%)" }}>
+            <Pagination
+              count={Math.ceil(readingList.length / 6)}
+              onChange={(e, value) => {
+                setPage(value);
+              }}
+            />
+          </div>
+        ) : null}
       </Container>
     </TabPanel>
   );

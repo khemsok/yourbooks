@@ -96,6 +96,10 @@ export const estReadingTime = (pages) => {
   return `Est. Reading Time ${hours ? hours + " hours" : ""} ${minutes ? minutes + " minutes" : ""}  `;
 };
 
+export function paginate(array, page_size, page_number) {
+  return array.slice((page_number - 1) * page_size, page_number * page_size);
+}
+
 export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, bookUserStatus, fetchBookUserStatus, componentType, fetchReadingList }) => {
   const handleClose = () => {
     setOpen(false);

@@ -14,20 +14,29 @@ export function useFinishedBooks() {
 
 export function FinishedBooksProvider({ children }) {
   const [finishedBooks, setFinishedBooks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const { user } = useAuth();
 
   const fetchFinishedBooks = async () => {
     if (user) {
-      const snapshot = await db.collection("books").where("userId", "==", user.uid).where("completeStatus", "==", true).get();
-      if (!snapshot.empty) {
-        let data = [];
-        snapshot.forEach((doc) => {
-          data.push({ docId: doc.id, data: doc.data() });
-        });
-        setFinishedBooks(data);
+      setIsLoading(true);
+      try {
+        const snapshot = await db.collection("books").where("userId", "==", user.uid).where("completeStatus", "==", true).get();
+        if (!snapshot.empty) {
+          let data = [];
+          snapshot.forEach((doc) => {
+            data.push({ docId: doc.id, data: doc.data() });
+          });
+          setFinishedBooks(data);
+        }
+        setIsLoading(false);
+      } catch (e) {
+        console.error(e);
+        setIsLoading(false);
       }
     }
   };
-  const value = { finishedBooks, fetchFinishedBooks };
+  const value = { finishedBooks, fetchFinishedBooks, isLoading };
   return <FinishedBooksContext.Provider value={value}>{children}</FinishedBooksContext.Provider>;
 }
