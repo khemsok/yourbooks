@@ -62,12 +62,12 @@ const useStyles = makeStyles((theme) => ({
   booksThumbnailContainer: {
     minWidth: "170px",
     [theme.breakpoints.down("sm")]: {
-      minWidth: "120px",
+      // minWidth: "120px",
     },
   },
   booksThumbnail: {
     [theme.breakpoints.down("sm")]: {
-      maxWidth: "90px",
+      maxWidth: "120px",
       marginBottom: "10px",
     },
   },
@@ -454,7 +454,7 @@ export default function Books() {
                 <TextField
                   fullWidth
                   multiline
-                  rows={isMobile ? 2 : 4}
+                  rows={isMobile ? 1 : 4}
                   label="Notes"
                   variant="outlined"
                   defaultValue={notesValue}
