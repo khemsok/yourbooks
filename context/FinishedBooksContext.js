@@ -15,6 +15,7 @@ export function useFinishedBooks() {
 export function FinishedBooksProvider({ children }) {
   const [finishedBooks, setFinishedBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [finishedBooksPage, setFinishedBooksPage] = useState(1);
 
   const { user } = useAuth();
 
@@ -30,6 +31,9 @@ export function FinishedBooksProvider({ children }) {
             data.push({ docId: doc.id, data: doc.data() });
           });
           setFinishedBooks(data);
+          finishedBooksPage > Math.ceil(data.length / 6) ? setFinishedBooksPage((page) => page - 1) : null;
+        } else {
+          setFinishedBooks([]);
         }
         setIsLoading(false);
       } catch (e) {
@@ -38,6 +42,6 @@ export function FinishedBooksProvider({ children }) {
       }
     }
   };
-  const value = { finishedBooks, fetchFinishedBooks, isLoading };
+  const value = { finishedBooks, fetchFinishedBooks, isLoading, finishedBooksPage, setFinishedBooksPage };
   return <FinishedBooksContext.Provider value={value}>{children}</FinishedBooksContext.Provider>;
 }

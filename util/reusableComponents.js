@@ -10,19 +10,12 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
+import Tooltip from "@material-ui/core/Tooltip";
+import Fade from "@material-ui/core/Fade";
 
 // util
 import moment from "moment";
 import { db } from "../src/firebase.config";
-
-const useStyles = makeStyles({
-  hidden: {
-    display: "-webkit-box",
-    WebkitLineClamp: 4,
-    overflow: "hidden",
-    WebkitBoxOrient: "vertical",
-  },
-});
 
 export function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -35,7 +28,14 @@ export function TabPanel(props) {
 }
 
 export function ReadMore({ children }) {
-  const classes = useStyles();
+  const classes = makeStyles({
+    hidden: {
+      display: "-webkit-box",
+      WebkitLineClamp: 4,
+      overflow: "hidden",
+      WebkitBoxOrient: "vertical",
+    },
+  })();
 
   const [isHidden, setIsHidden] = useState(true);
   return (
@@ -124,11 +124,19 @@ export const estReadingTime = (pages) => {
   return `Est. Reading Time ${hours ? hours + " hours" : ""} ${minutes ? minutes + " minutes" : ""}  `;
 };
 
+export const displayBookTitle = (title, subtitle) => {
+  if (subtitle) {
+    return `${title}: ${subtitle}`;
+  } else {
+    return title;
+  }
+};
+
 export function paginate(array, page_size, page_number) {
   return array.slice((page_number - 1) * page_size, page_number * page_size);
 }
 
-export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, bookUserStatus, fetchBookUserStatus, componentType, fetchReadingList }) => {
+export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, bookUserStatus, fetchBookUserStatus, componentType, fetchReadingList, fetchFinishedBooks }) => {
   const handleClose = () => {
     setOpen(false);
   };
@@ -179,6 +187,30 @@ export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, 
       handleClose();
     }
   };
+
+  const deleteFromFinishedBooks = async () => {
+    try {
+      await db.doc(`/books/${docId}`).delete();
+      await fetchFinishedBooks();
+      handleClose();
+    } catch (e) {
+      console.error(e);
+      handleClose();
+    }
+  };
+
+  const handleDelete = () => {
+    if (componentType === "books") {
+      deleteFromBooks();
+    } else if (componentType === "readinglist") {
+      deleteFromReadingList();
+    } else if (componentType === "discover") {
+      deleteFromDiscover();
+    } else if (componentType === "finishedbooks") {
+      deleteFromFinishedBooks();
+    }
+  };
+
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
@@ -190,7 +222,7 @@ export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, 
           <Button onClick={handleClose} color="primary">
             No
           </Button>
-          <Button onClick={componentType === "books" ? deleteFromBooks : componentType === "readinglist" ? deleteFromReadingList : deleteFromDiscover} color="primary" autoFocus>
+          <Button onClick={handleDelete} color="primary" autoFocus>
             Yes
           </Button>
         </DialogActions>
@@ -198,3 +230,26 @@ export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, 
     </div>
   );
 };
+
+export function CustomTooltip({ children, title }) {
+  const classes = makeStyles({
+    tooltip: {
+      fontFamily: "Merriweather, serif",
+      backgroundColor: "rgba(0, 0, 0, 0.90)",
+      // backgroundColor: "transparent",
+      // border: "1px solid black",
+      // borderBottom: "1px solid black",
+      // color: "black",
+      borderRadius: 0,
+      textAlign: "center",
+    },
+    arrow: {
+      // color: "black",
+    },
+  })();
+  return (
+    <Tooltip classes={{ tooltip: classes.tooltip, arrow: classes.arrow }} title={title} placement="top" TransitionComponent={Fade} TransitionProps={{ timeout: 250 }}>
+      {children}
+    </Tooltip>
+  );
+}

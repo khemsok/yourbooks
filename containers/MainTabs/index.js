@@ -59,7 +59,7 @@ export default function MainTabs() {
       {user ? (
         currentTab !== null ? (
           <>
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: "30px" }}>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: "10px" }}>
               <StyledTabs value={currentTab} onChange={handleChangeTab}>
                 <StyledTab label="Reading List" />
                 <StyledTab label="Discover" />
@@ -67,14 +67,13 @@ export default function MainTabs() {
               </StyledTabs>
             </div>
             {currentTab === 0 && <ReadingListTab value={currentTab} index={0} />}
-
             {currentTab === 1 && <DiscoverTab value={currentTab} index={1} />}
             {currentTab === 2 && <FinishedBooksTab value={currentTab} index={2} />}
           </>
         ) : null
       ) : (
         <>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: "30px" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "10px" }}>
             <StyledTabs value={0} onChange={handleChangeTab}>
               <StyledTab label="Discover" />
             </StyledTabs>
