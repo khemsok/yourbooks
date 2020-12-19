@@ -15,6 +15,7 @@ export function useReadingList() {
 export function ReadingListProvider({ children }) {
   const [readingList, setReadingList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
 
   const { user } = useAuth();
 
@@ -22,17 +23,21 @@ export function ReadingListProvider({ children }) {
     if (user) {
       setIsLoading(true);
       const snapshot = await db.collection("books").where("userId", "==", user.uid).where("completeStatus", "==", false).get();
+      console.log("fetchreadinglist inside context");
       if (!snapshot.empty) {
         let data = [];
         snapshot.forEach((doc) => {
           data.push({ docId: doc.id, data: doc.data() });
         });
         setReadingList(data);
+      } else {
+        setReadingList([]);
       }
+
       setIsLoading(false);
     }
   };
 
-  const value = { readingList, setReadingList, fetchReadingList, isLoading };
+  const value = { readingList, setReadingList, fetchReadingList, isLoading, page, setPage };
   return <ReadingListContext.Provider value={value}>{children}</ReadingListContext.Provider>;
 }

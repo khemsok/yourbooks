@@ -52,7 +52,7 @@ export default function MainTabs() {
   const { user } = useAuth();
   const { currentTab, handleChangeTab } = useCurrentPage();
 
-  console.log(currentTab, "testing123");
+  // console.log(currentTab, "testing123");
 
   return (
     <>

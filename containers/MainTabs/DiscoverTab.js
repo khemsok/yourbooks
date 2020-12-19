@@ -6,6 +6,7 @@ import DiscoverBooks from "./DiscoverBooks";
 // Context
 import { useDiscover } from "../../context/DiscoverContext";
 import { useAuth } from "../../context/AuthContext";
+import { useCurrentPage } from "../../context/CurrentPageContext";
 
 // MUI
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,7 +17,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 // util
-import { TabPanel, checkDocDetail } from "../../util/reusableComponents";
+import { TabPanel, checkDocDetail, checkDocsDetail } from "../../util/reusableComponents";
 
 // const useStyles = makeStyles({
 //   root: {
@@ -74,31 +75,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ReadMore({ children }) {
-  const classes = useStyles();
-
-  const [isHidden, setIsHidden] = useState(true);
-  return (
-    <>
-      <div>
-        <div className={isHidden ? classes.hidden : null}>{children}</div>
-        <span>
-          {children.length > 400 ? (
-            <a style={{ cursor: "pointer", fontWeight: "700" }} onClick={() => setIsHidden(!isHidden)}>
-              {isHidden ? "(More)" : "(Less)"}
-            </a>
-          ) : null}
-        </span>
-      </div>
-    </>
-  );
-}
-
 export default function DiscoverTab({ value, index }) {
   const classes = useStyles();
 
   const { user } = useAuth();
   const { discoverBooks, setDiscoverBooks, fetchDiscoverBooks } = useDiscover();
+  const { currentTab } = useCurrentPage();
 
   const [bookList, setBookList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -127,7 +109,9 @@ export default function DiscoverTab({ value, index }) {
   };
 
   useEffect(() => {
-    fetchDiscoverBooks();
+    if ((user && (currentTab === 1 || currentTab === null)) || (user === null && currentTab === 0) || currentTab === null) {
+      fetchDiscoverBooks();
+    }
   }, []);
 
   return (

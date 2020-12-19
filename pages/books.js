@@ -157,6 +157,7 @@ function Autosave({ docId, notesValue, setIsLoadingNotes }) {
     debounce(async (newNotesValue) => {
       setIsLoadingNotes(true);
       try {
+        console.log("debounce saved");
         await db.doc(`/books/${docId}`).update({ notes: newNotesValue });
         setTimeout(() => {
           setIsLoadingNotes(false);
@@ -216,7 +217,6 @@ export default function Books() {
   const [bookUserStatus, setBookUserStatus] = useState(null);
   const [notesValue, setNotesValue] = useState("");
   const [isLoadingNotes, setIsLoadingNotes] = useState(false);
-  const [submitNotes, setSubmitNotes] = useState(false);
   const [rating, setRating] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -231,13 +231,6 @@ export default function Books() {
 
   const [{ id: bookId, data, isLoading, error }, dispatch] = useReducer(booksReducer, initialState);
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setSubmitNotes(false);
-  };
   async function fetchData() {
     dispatch({ type: "FETCH_REQUEST" });
     try {
@@ -252,6 +245,7 @@ export default function Books() {
   async function fetchBookUserStatus() {
     try {
       const doc = await db.collection("books").where("bookId", "==", id).where("userId", "==", user.uid).limit(1).get();
+      console.log("fetchbookuserstatus", id);
       if (!doc.empty) {
         setBookUserStatus({ docId: doc.docs[0].id, data: doc.docs[0].data() });
         setNotesValue(doc.docs[0].data().notes);
@@ -278,6 +272,12 @@ export default function Books() {
       fetchBookUserStatus();
     }
   }, [id, user]);
+
+  // useEffect(() => {
+  //   if (user) {
+  //     fetchBookUserStatus();
+  //   }
+  // }, [endDate]);
   // console.log(bookUserStatus, "bookuserstatus");
   // console.log(data, "test data");
 
@@ -325,6 +325,7 @@ export default function Books() {
                         size="small"
                         style={{ marginBottom: "10px" }}
                         onChange={async (e, value) => {
+                          console.log("rating");
                           await db.doc(`/books/${bookUserStatus.docId}`).update({ rating: value });
                           setRating(value);
                         }}
@@ -411,6 +412,7 @@ export default function Books() {
                       <RemoveIcon className={classes.readingIcon} />
                       <Typography variant="body2" className={classes.readingList}>
                         Remove from Reading List
+                        {/* {bookUserStatus.data.completeStatus ? "Remove from Finished Books" : "Remove from Reading List"} */}
                       </Typography>
                     </div>
                   </Button>
@@ -419,6 +421,7 @@ export default function Books() {
                     onClick={async () => {
                       try {
                         const doc = await db.collection("books").where("bookId", "==", data.id).where("userId", "==", user.uid).limit(1).get();
+                        console.log("get book");
                         if (doc.empty) {
                           await db.collection("books").add({
                             bookId: data.id,
@@ -431,6 +434,7 @@ export default function Books() {
                             notes: "",
                           });
                           await fetchBookUserStatus();
+                          console.log("add book and fetchuserstatus");
                         }
                       } catch (e) {
                         console.error(e);

@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, useContext } from "react";
+import { useRouter } from "next/router";
 
 // Context
 import { useAuth } from "./AuthContext";
@@ -16,6 +17,8 @@ export function useCurrentPage() {
 }
 
 export function CurrentPageProvider({ children }) {
+  const router = useRouter();
+
   const { user } = useAuth();
   const { fetchReadingList } = useReadingList();
   const { fetchFinishedBooks } = useFinishedBooks();
@@ -39,13 +42,19 @@ export function CurrentPageProvider({ children }) {
   };
 
   useEffect(() => {
-    console.log("wtf");
     if (user) {
       setCurrentTab(1);
     } else {
       setCurrentTab(0);
     }
   }, [user]);
+
+  // useEffect(() => {
+  //   if ((router.pathname !== "/books" && user && currentTab === null) || currentTab === 1) {
+  //     console.log("my router pathname is ", router.pathname);
+  //     fetchDiscoverBooks();
+  //   }
+  // }, [router.pathname]);
 
   console.log(currentTab, "current tab");
 

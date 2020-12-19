@@ -61,7 +61,8 @@ export const displayDetails = (publishedDate, categories, rating) => {
 
 export const checkDocDetail = async (id, user = null) => {
   if (user) {
-    const doc = await db.collection("books").where("bookId", "==", id).where("userId", "==", user.uid).limit(1).get();
+    const doc = await db.collection("books").where("userId", "==", user.uid).where("bookId", "==", id).limit(1).get();
+    console.log("checkdocdetail");
     const docId = !doc.empty ? doc.docs[0].id : "";
     const docDetail = {
       read: doc.empty,
@@ -76,9 +77,39 @@ export const checkDocDetail = async (id, user = null) => {
   }
 };
 
+export const checkDocsDetail = async (books, user = null) => {
+  // TODO: Need to check if the two books are in the database. Then return back the data as it needed to be
+  // pass in data.items
+  const bookData = {};
+  for (let book of books) {
+    bookData[book.id] = {
+      book: book,
+      read: false,
+      docId: null,
+    };
+  }
+
+  if (user) {
+    const bookIds = Object.keys(bookData);
+    console.log("check docs detail: getting data from db ");
+    const docs = await db.collection("books").where("userId", "==", user.uid).where("bookId", "in", bookIds).get();
+
+    docs.docs.map((doc) => {
+      let bookId = doc.data()["bookId"];
+      let docId = doc.id;
+      if (bookIds.includes(bookId)) {
+        bookData[bookId]["read"] = true;
+        bookData[bookId]["docId"] = docId;
+      }
+    });
+  }
+  return Object.keys(bookData).map((bookId) => bookData[bookId]);
+};
+
 export const checkDocExists = async (id, user = null) => {
   if (user) {
     const doc = await db.collection("books").where("bookId", "==", id).where("userId", "==", user.uid).limit(1).get();
+    console.log("checkdocexists");
     return !doc.empty;
   } else {
     return false;

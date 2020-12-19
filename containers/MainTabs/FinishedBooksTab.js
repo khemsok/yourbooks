@@ -13,7 +13,7 @@ import BarLoader from "react-spinners/BarLoader";
 export default function FinishedBooksTab({ value, index }) {
   const { finishedBooks, isLoading } = useFinishedBooks();
 
-  console.log(finishedBooks, "finishedbooks");
+  // console.log(finishedBooks, "finishedbooks");
   return (
     <>
       <TabPanel value={value} index={index}>

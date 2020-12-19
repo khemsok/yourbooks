@@ -5,7 +5,7 @@ import { useAuth } from "./AuthContext";
 
 // util
 import { db } from "../src/firebase.config";
-import { checkDocDetail } from "../util/reusableComponents";
+import { checkDocDetail, checkDocsDetail } from "../util/reusableComponents";
 
 export const DiscoverContext = createContext(null);
 
@@ -25,15 +25,17 @@ export function DiscoverProvider({ children }) {
     try {
       const res = await fetch(url);
       const data = await res.json();
-      let books = [];
-      for (const book of data.items) {
-        let { read, docId } = await checkDocDetail(book.id, user);
-        books.push({
-          book: book,
-          read: !read,
-          docId: docId,
-        });
-      }
+      // let books = [];
+      let books = await checkDocsDetail(data.items, user);
+
+      // for (const book of data.items) {
+      //   let { read, docId } = await checkDocDetail(book.id, user);
+      //   books.push({
+      //     book: book,
+      //     read: !read,
+      //     docId: docId,
+      //   });
+      // }
       setDiscoverBooks(books);
       setIsLoading(false);
     } catch (err) {
@@ -42,11 +44,9 @@ export function DiscoverProvider({ children }) {
     }
   };
 
-  useEffect(() => {
-    fetchDiscoverBooks();
-  }, [user]);
-
-  console.log(discoverBooks, "discoverbooks");
+  // useEffect(() => {
+  //   fetchDiscoverBooks();
+  // }, [user]);
 
   const value = { discoverBooks, setDiscoverBooks, isLoading, fetchDiscoverBooks: fetchDiscoverBooks };
 

@@ -23,6 +23,7 @@ export function FinishedBooksProvider({ children }) {
       setIsLoading(true);
       try {
         const snapshot = await db.collection("books").where("userId", "==", user.uid).where("completeStatus", "==", true).get();
+        console.log("fetchfinsihedbook");
         if (!snapshot.empty) {
           let data = [];
           snapshot.forEach((doc) => {

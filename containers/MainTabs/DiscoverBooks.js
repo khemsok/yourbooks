@@ -125,7 +125,7 @@ export default function DiscoverBooks() {
             {read ? (
               <Button
                 onClick={async () => {
-                  console.log(book.docId);
+                  // console.log(book.docId);
                   setAlertBook(book);
                   setAlertOpen(true);
                   setAlertDocId(docId);
@@ -143,6 +143,7 @@ export default function DiscoverBooks() {
               <Button
                 onClick={async () => {
                   const doc = await db.collection("books").where("bookId", "==", book.id).where("userId", "==", user.uid).limit(1).get();
+                  console.log("get book");
                   let docRef;
                   if (doc.empty) {
                     docRef = await db.collection("books").add({
@@ -155,6 +156,7 @@ export default function DiscoverBooks() {
                       completeStatus: false,
                       notes: "",
                     });
+                    console.log("add book");
                   }
 
                   setDiscoverBooks((books) =>
