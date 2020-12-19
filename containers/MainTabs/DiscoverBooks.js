@@ -152,7 +152,7 @@ export default function DiscoverBooks() {
                       start: moment().format("MM/DD/YYYY"),
                       end: "",
                       userId: user.uid,
-                      rating: "",
+                      rating: 0,
                       completeStatus: false,
                       notes: "",
                     });

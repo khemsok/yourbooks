@@ -25,17 +25,7 @@ export function DiscoverProvider({ children }) {
     try {
       const res = await fetch(url);
       const data = await res.json();
-      // let books = [];
       let books = await checkDocsDetail(data.items, user);
-
-      // for (const book of data.items) {
-      //   let { read, docId } = await checkDocDetail(book.id, user);
-      //   books.push({
-      //     book: book,
-      //     read: !read,
-      //     docId: docId,
-      //   });
-      // }
       setDiscoverBooks(books);
       setIsLoading(false);
     } catch (err) {

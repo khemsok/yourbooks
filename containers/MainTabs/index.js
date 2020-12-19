@@ -66,9 +66,10 @@ export default function MainTabs() {
                 <StyledTab label="Finished Books" />
               </StyledTabs>
             </div>
-            <DiscoverTab value={currentTab} index={1} />
-            <ReadingListTab value={currentTab} index={0} />
-            <FinishedBooksTab value={currentTab} index={2} />
+            {currentTab === 0 && <ReadingListTab value={currentTab} index={0} />}
+
+            {currentTab === 1 && <DiscoverTab value={currentTab} index={1} />}
+            {currentTab === 2 && <FinishedBooksTab value={currentTab} index={2} />}
           </>
         ) : null
       ) : (

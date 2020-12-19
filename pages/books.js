@@ -325,9 +325,8 @@ export default function Books() {
                         size="small"
                         style={{ marginBottom: "10px" }}
                         onChange={async (e, value) => {
-                          console.log("rating");
-                          await db.doc(`/books/${bookUserStatus.docId}`).update({ rating: value });
                           setRating(value);
+                          await db.doc(`/books/${bookUserStatus.docId}`).update({ rating: value });
                         }}
                         name="rating"
                       />
@@ -429,7 +428,7 @@ export default function Books() {
                             start: moment().format("MM/DD/YYYY"),
                             end: "",
                             userId: user.uid,
-                            rating: "",
+                            rating: 0,
                             completeStatus: false,
                             notes: "",
                           });

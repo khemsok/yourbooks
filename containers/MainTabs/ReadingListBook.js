@@ -77,9 +77,6 @@ export default function ImageLoad({ book, setAlertDocId, setAlertOpen }) {
               </Typography>
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              {/* <IconButton size="small">
-                  <HighlightOffIcon fontSize="small" />
-                </IconButton> */}
               <div>
                 <Button
                   onClick={() => {

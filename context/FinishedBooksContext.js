@@ -22,7 +22,7 @@ export function FinishedBooksProvider({ children }) {
     if (user) {
       setIsLoading(true);
       try {
-        const snapshot = await db.collection("books").where("userId", "==", user.uid).where("completeStatus", "==", true).get();
+        const snapshot = await db.collection("books").where("userId", "==", user.uid).where("completeStatus", "==", true).orderBy("end", "desc").get();
         console.log("fetchfinsihedbook");
         if (!snapshot.empty) {
           let data = [];

@@ -109,10 +109,11 @@ export default function DiscoverTab({ value, index }) {
   };
 
   useEffect(() => {
-    if ((user && (currentTab === 1 || currentTab === null)) || (user === null && currentTab === 0) || currentTab === null) {
-      fetchDiscoverBooks();
-    }
-  }, []);
+    // if ((user && (currentTab === 1 || currentTab === null)) || (user === null && currentTab === 0) || currentTab === null) {
+    fetchDiscoverBooks();
+    console.log("fetch discover book");
+    // }
+  }, [user]);
 
   return (
     <>
@@ -173,7 +174,7 @@ export default function DiscoverTab({ value, index }) {
                     </>
                   ),
                 }}
-                label="Search books..."
+                label="Discover new books..."
                 onChange={(e) => {
                   fetchBooks(e.target.value);
                 }}

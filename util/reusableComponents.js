@@ -9,6 +9,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
+import Box from "@material-ui/core/Box";
 
 // util
 import moment from "moment";
@@ -27,13 +28,9 @@ export function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
-    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
-      {value === index && (
-        <>
-          <div>{children}</div>
-        </>
-      )}
-    </div>
+    <Typography component="div" role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
+      {value === index && <Box p={3}>{value === index && children}</Box>}
+    </Typography>
   );
 }
 
