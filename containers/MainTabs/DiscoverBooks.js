@@ -15,7 +15,7 @@ import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 
 // util
-import BarLoader from "react-spinners/BarLoader";
+import SkewLoader from "react-spinners/SkewLoader";
 import moment from "moment";
 import { db } from "../../src/firebase.config";
 import { ReadMore, displayDetails, RemoveBookAlert } from "../../util/reusableComponents";
@@ -189,7 +189,10 @@ export default function DiscoverBooks() {
     ))
   ) : (
     <div style={{ display: "flex", justifyContent: "center" }}>
-      <BarLoader color={"#000"} loading={isLoading} />
+      <SkewLoader color={"#000"} loading={isLoading} />
+      <Typography variant="h6" style={{ fontSize: ".85em", marginLeft: "10px" }}>
+        Recommending...
+      </Typography>
     </div>
   );
   return <>{displayDiscoverBooks}</>;
