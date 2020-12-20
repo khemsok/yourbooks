@@ -69,6 +69,17 @@ export function DiscoverProvider({ children }) {
         }
       } else {
         // need to change recommender to send recommendation when there is no books
+        const url = "https://www.googleapis.com/books/v1/volumes?q=sapiens&maxResults=2";
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          let books = await checkDocsDetail(data.items, user);
+          setDiscoverBooks(books);
+          setIsLoading(false);
+        } catch (err) {
+          console.error(err);
+          setIsLoading(false);
+        }
       }
     } else {
       const url = "https://www.googleapis.com/books/v1/volumes?q=sapiens&maxResults=2";
