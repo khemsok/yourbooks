@@ -38,58 +38,56 @@ export default function ReadingListTab({ value, index }) {
     <TabPanel value={value} index={index}>
       {!isLoading ? (
         readingList.length === 0 ? (
-          <Typography variant="h6">You don't have any book in your reading list yet :(</Typography>
+          <Typography variant="h6">You don't have any book in your reading list :(</Typography>
         ) : (
           <>
-            {readingList.length > 6 || isMobile ? (
-              <Container maxWidth="xs">
-                <Autocomplete
-                  color="primary"
-                  fullWidth
-                  freeSolo
-                  options={readingList}
-                  renderOption={(option) => {
-                    option = option.data.data;
-                    return (
-                      <>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <div style={{ minWidth: "70px" }}>
-                            <img src={option.imageLinks && option.imageLinks.smallThumbnail} style={{ maxHeight: "50px" }} />
-                          </div>
-                          <Typography variant="body2" style={{ fontSize: ".8em" }}>
-                            {option.title}
-                            {option.subtitle ? `: ${option.subtitle}` : null}
-                          </Typography>
+            <Container maxWidth="xs">
+              <Autocomplete
+                color="primary"
+                fullWidth
+                freeSolo
+                options={readingList}
+                renderOption={(option) => {
+                  option = option.data.data;
+                  return (
+                    <>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ minWidth: "70px" }}>
+                          <img src={option.imageLinks && option.imageLinks.smallThumbnail} style={{ maxHeight: "50px" }} />
                         </div>
-                      </>
-                    );
-                  }}
-                  getOptionLabel={(option) => {
-                    return `${option.data.data.title}`;
-                  }}
-                  loading={isLoading}
-                  onChange={(e, v, r) => {
-                    if (r === "select-option") {
-                      router.push(`/books?id=${v.data.bookId}`);
-                    }
-                  }}
-                  onInputChange={(e, v, r) => {
-                    if (r === "clear") {
-                      // setBookList([]);
-                    }
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      InputProps={{
-                        ...params.InputProps,
-                      }}
-                      label="Search your reading list..."
-                    />
-                  )}
-                />
-              </Container>
-            ) : null}
+                        <Typography variant="body2" style={{ fontSize: ".8em" }}>
+                          {option.title}
+                          {option.subtitle ? `: ${option.subtitle}` : null}
+                        </Typography>
+                      </div>
+                    </>
+                  );
+                }}
+                getOptionLabel={(option) => {
+                  return `${option.data.data.title}`;
+                }}
+                loading={isLoading}
+                onChange={(e, v, r) => {
+                  if (r === "select-option") {
+                    router.push(`/books?id=${v.data.bookId}`);
+                  }
+                }}
+                onInputChange={(e, v, r) => {
+                  if (r === "clear") {
+                    // setBookList([]);
+                  }
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    InputProps={{
+                      ...params.InputProps,
+                    }}
+                    label="Search your reading list..."
+                  />
+                )}
+              />
+            </Container>
             <Container maxWidth="md" style={{ minHeight: "55vh", position: "relative", marginTop: "70px" }}>
               <Grid container spacing={4}>
                 {((!isMobile && paginate(readingList, 6, readingPage)) || readingList).map((book, index) => (
