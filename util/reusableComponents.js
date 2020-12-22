@@ -136,6 +136,10 @@ export function paginate(array, page_size, page_number) {
   return array.slice((page_number - 1) * page_size, page_number * page_size);
 }
 
+export function arrayEquals(a, b) {
+  return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((val, index) => val === b[index]);
+}
+
 export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, bookUserStatus, fetchBookUserStatus, componentType, fetchReadingList, fetchFinishedBooks }) => {
   const handleClose = () => {
     setOpen(false);

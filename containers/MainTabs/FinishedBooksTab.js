@@ -26,11 +26,17 @@ export default function FinishedBooksTab({ value, index }) {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertDocId, setAlertDocId] = useState(null);
 
-  const { finishedBooks, isLoading, fetchFinishedBooks, finishedBooksPage, setFinishedBooksPage } = useFinishedBooks();
+  const { finishedBooks, isLoading, setIsLoading, fetchFinishedBooks, finishedBooksPage, setFinishedBooksPage } = useFinishedBooks();
+
+  // useEffect(() => {
+  //   fetchFinishedBooks();
+  // }, []);
 
   useEffect(() => {
-    fetchFinishedBooks();
-  }, []);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 250);
+  }, [finishedBooks]);
 
   console.log(finishedBooks, "finishedbooks");
   console.log(finishedBooksPage, "pagegggg");
@@ -91,7 +97,7 @@ export default function FinishedBooksTab({ value, index }) {
               </Container>
               <Container maxWidth="md" style={{ minHeight: "55vh", position: "relative", marginTop: "70px" }}>
                 <Grid container spacing={4}>
-                  {((!isMobile && paginate(finishedBooks, 6, finishedBooksPage)) || finishedBooks).map((book, index) => (
+                  {((!isMobile && finishedBooks.length > 6 && paginate(finishedBooks, 6, finishedBooksPage)) || finishedBooks).map((book, index) => (
                     <FinishedBooksBook book={book} key={`${book.docId}-${index}`} setAlertDocId={setAlertDocId} setAlertOpen={setAlertOpen} />
                   ))}
                 </Grid>

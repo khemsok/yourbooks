@@ -1,4 +1,4 @@
-import { useState, createContext, useContext } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 
 // Context
 import { useAuth } from "./AuthContext";
@@ -42,6 +42,23 @@ export function FinishedBooksProvider({ children }) {
       }
     }
   };
-  const value = { finishedBooks, fetchFinishedBooks, isLoading, finishedBooksPage, setFinishedBooksPage };
+
+  useEffect(() => {
+    console.log("finishedbooks context effect");
+    db.collection("books")
+      .where("userId", "==", user.uid)
+      .where("completeStatus", "==", true)
+      .onSnapshot((snapshot) => {
+        setIsLoading(true);
+        let books = snapshot.docs.map((doc) => ({
+          docId: doc.id,
+          data: doc.data(),
+        }));
+        setFinishedBooks(books);
+        finishedBooksPage > Math.ceil(books.length / 6) ? setFinishedBooksPage((page) => page - 1) : null;
+      });
+  }, []);
+
+  const value = { finishedBooks, fetchFinishedBooks, isLoading, setIsLoading, finishedBooksPage, setFinishedBooksPage };
   return <FinishedBooksContext.Provider value={value}>{children}</FinishedBooksContext.Provider>;
 }

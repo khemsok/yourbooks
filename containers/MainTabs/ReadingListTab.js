@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 
 // Context
 import { useReadingList } from "../../context/ReadingListContext";
+import { useAuth } from "../../context/AuthContext";
 
 // Component
 import ReadingListBook from "./ReadingListBook";
@@ -19,20 +20,27 @@ import TextField from "@material-ui/core/TextField";
 import { TabPanel, RemoveBookAlert, paginate } from "../../util/reusableComponents";
 import BarLoader from "react-spinners/BarLoader";
 import { isMobile } from "react-device-detect";
+import { db } from "../../src/firebase.config";
 
 export default function ReadingListTab({ value, index }) {
   const router = useRouter();
-  const { readingList, isLoading, fetchReadingList, readingPage, setReadingPage } = useReadingList();
+  const { readingList, setReadingList, isLoading, fetchReadingList, setIsLoading, readingPage, setReadingPage } = useReadingList();
+
+  const { user } = useAuth();
 
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertDocId, setAlertDocId] = useState(null);
   // const [page, setPage] = useState(1);
 
   useEffect(() => {
-    fetchReadingList();
-  }, []);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 250);
+  }, [readingList]);
 
   console.log(readingList);
+
+  console.log(readingPage, "testing reading page");
 
   return (
     <TabPanel value={value} index={index}>
@@ -90,7 +98,7 @@ export default function ReadingListTab({ value, index }) {
             </Container>
             <Container maxWidth="md" style={{ minHeight: "55vh", position: "relative", marginTop: "70px" }}>
               <Grid container spacing={4}>
-                {((!isMobile && paginate(readingList, 6, readingPage)) || readingList).map((book, index) => (
+                {((!isMobile && readingList.length > 6 && paginate(readingList, 6, readingPage)) || readingList).map((book, index) => (
                   <ReadingListBook book={book} setAlertDocId={setAlertDocId} setAlertOpen={setAlertOpen} key={`${index}-${book.data.bookId}`} />
                 ))}
               </Grid>

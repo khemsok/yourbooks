@@ -33,10 +33,10 @@ export function CurrentPageProvider({ children }) {
       fetchDiscoverBooks();
     }
     if (user && newValue === 0) {
-      fetchReadingList();
+      // fetchReadingList();
     }
     if (user && newValue == 2) {
-      fetchFinishedBooks();
+      // fetchFinishedBooks();
     }
     setCurrentTab(newValue);
   };

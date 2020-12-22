@@ -38,6 +38,25 @@ export function ReadingListProvider({ children }) {
     }
   };
 
-  const value = { readingList, setReadingList, fetchReadingList, isLoading, readingPage, setReadingPage };
+  useEffect(() => {
+    // fetchReadingList();
+    console.log("readinglist context effect");
+    db.collection("books")
+      .where("userId", "==", user.uid)
+      .where("completeStatus", "==", false)
+      .onSnapshot((snapshot) => {
+        setIsLoading(true);
+        let books = snapshot.docs.map((doc) => ({
+          docId: doc.id,
+          data: doc.data(),
+        }));
+        setReadingList(books);
+        console.log(books, books.length, "books reading list");
+        // console.log(readingPage, "testing testing readingpage");
+        readingPage > Math.ceil(books.length / 6) ? setReadingPage((page) => page - 1) : null;
+      });
+  }, []);
+
+  const value = { readingList, setIsLoading, setReadingList, fetchReadingList, isLoading, readingPage, setReadingPage };
   return <ReadingListContext.Provider value={value}>{children}</ReadingListContext.Provider>;
 }
