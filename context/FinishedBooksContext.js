@@ -51,23 +51,24 @@ export function FinishedBooksProvider({ children }) {
   };
 
   useEffect(() => {
-    // console.log("finishedbooks context effect");
-    // const unsubscribe = db
-    //   .collection("books")
-    //   .where("userId", "==", user.uid)
-    //   .where("completeStatus", "==", true)
-    //   .onSnapshot((snapshot) => {
-    //     setIsLoading(true);
-    //     let books = snapshot.docs.map((doc) => ({
-    //       docId: doc.id,
-    //       data: doc.data(),
-    //     }));
-    //     setFinishedBooks(books);
-    //     finishedBooksPage > Math.ceil(books.length / 6)
-    //       ? setFinishedBooksPage((page) => page - 1)
-    //       : null;
-    //   });
-    // return unsubscribe;
+    console.log("finishedbooks context effect");
+    const unsubscribe = db
+      .collection("books")
+      .where("userId", "==", user.uid)
+      .where("completeStatus", "==", true)
+      .onSnapshot((snapshot) => {
+        setIsLoading(true);
+        let books = snapshot.docs.map((doc) => ({
+          docId: doc.id,
+          data: doc.data(),
+        }));
+        setFinishedBooks(books);
+        finishedBooksPage > Math.ceil(books.length / 6)
+          ? setFinishedBooksPage((page) => page - 1)
+          : null;
+      });
+
+    return unsubscribe;
   }, []);
 
   const value = {
