@@ -46,25 +46,25 @@ export function ReadingListProvider({ children }) {
 
   useEffect(() => {
     // fetchReadingList();
-    console.log("readinglist context effect");
-    const unsubscribe = db
-      .collection("books")
-      .where("userId", "==", user.uid)
-      .where("completeStatus", "==", false)
-      .onSnapshot((snapshot) => {
-        setIsLoading(true);
-        let books = snapshot.docs.map((doc) => ({
-          docId: doc.id,
-          data: doc.data(),
-        }));
-        setReadingList(books);
-        console.log(books, books.length, "books reading list");
-        // console.log(readingPage, "testing testing readingpage");
-        readingPage > Math.ceil(books.length / 6)
-          ? setReadingPage((page) => page - 1)
-          : null;
-      });
-    return unsubscribe;
+    // console.log("readinglist context effect");
+    // const unsubscribe = db
+    //   .collection("books")
+    //   .where("userId", "==", user.uid)
+    //   .where("completeStatus", "==", false)
+    //   .onSnapshot((snapshot) => {
+    //     setIsLoading(true);
+    //     let books = snapshot.docs.map((doc) => ({
+    //       docId: doc.id,
+    //       data: doc.data(),
+    //     }));
+    //     setReadingList(books);
+    //     console.log(books, books.length, "books reading list");
+    //     // console.log(readingPage, "testing testing readingpage");
+    //     readingPage > Math.ceil(books.length / 6)
+    //       ? setReadingPage((page) => page - 1)
+    //       : null;
+    //   });
+    // return unsubscribe;
   }, []);
 
   const value = {
