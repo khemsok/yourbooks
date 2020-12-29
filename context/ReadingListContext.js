@@ -47,7 +47,8 @@ export function ReadingListProvider({ children }) {
   useEffect(() => {
     // fetchReadingList();
     console.log("readinglist context effect");
-    db.collection("books")
+    const unsubscribe = db
+      .collection("books")
       .where("userId", "==", user.uid)
       .where("completeStatus", "==", false)
       .onSnapshot((snapshot) => {
@@ -62,8 +63,8 @@ export function ReadingListProvider({ children }) {
         readingPage > Math.ceil(books.length / 6)
           ? setReadingPage((page) => page - 1)
           : null;
-      })
-      .catch((err) => console.error(err));
+      });
+    return unsubscribe;
   }, []);
 
   const value = {

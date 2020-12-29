@@ -52,7 +52,8 @@ export function FinishedBooksProvider({ children }) {
 
   useEffect(() => {
     console.log("finishedbooks context effect");
-    db.collection("books")
+    const unsubscribe = db
+      .collection("books")
       .where("userId", "==", user.uid)
       .where("completeStatus", "==", true)
       .onSnapshot((snapshot) => {
@@ -65,8 +66,9 @@ export function FinishedBooksProvider({ children }) {
         finishedBooksPage > Math.ceil(books.length / 6)
           ? setFinishedBooksPage((page) => page - 1)
           : null;
-      })
-      .catch((err) => console.error(err));
+      });
+
+    return unsubscribe;
   }, []);
 
   const value = {
