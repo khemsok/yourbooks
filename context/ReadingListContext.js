@@ -17,6 +17,8 @@ export function ReadingListProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [readingPage, setReadingPage] = useState(1);
 
+  console.log(readingPage, "reading page");
+
   const { user } = useAuth();
 
   const fetchReadingList = async () => {
@@ -47,25 +49,35 @@ export function ReadingListProvider({ children }) {
   useEffect(() => {
     // fetchReadingList();
     console.log("readinglist context effect");
-    const unsubscribe = db
-      .collection("books")
-      .where("userId", "==", user.uid)
-      .where("completeStatus", "==", false)
-      .onSnapshot((snapshot) => {
-        setIsLoading(true);
-        let books = snapshot.docs.map((doc) => ({
-          docId: doc.id,
-          data: doc.data(),
-        }));
-        setReadingList(books);
-        console.log(books, books.length, "books reading list");
-        // console.log(readingPage, "testing testing readingpage");
-        readingPage > Math.ceil(books.length / 6)
-          ? setReadingPage((page) => page - 1)
-          : null;
-      });
-    return unsubscribe;
-  }, []);
+    try {
+      if (user) {
+        const unsubscribe = db
+          .collection("books")
+          .where("userId", "==", user.uid)
+          .where("completeStatus", "==", false)
+          .onSnapshot((snapshot) => {
+            setIsLoading(true);
+            let books = snapshot.docs.map((doc) => ({
+              docId: doc.id,
+              data: doc.data(),
+            }));
+            setReadingList(books);
+
+            setReadingPage((page) =>
+              books.length > 0 && page > Math.ceil(books.length / 6)
+                ? page - 1
+                : page
+            );
+            // books.length > 0 && readingPage > Math.ceil(books.length / 6)
+            //   ? setReadingPage((page) => page - 1)
+            //   : null;
+          });
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [user]);
 
   const value = {
     readingList,

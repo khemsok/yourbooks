@@ -17,14 +17,26 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 
 // util
-import { TabPanel, RemoveBookAlert, paginate } from "../../util/reusableComponents";
+import {
+  TabPanel,
+  RemoveBookAlert,
+  paginate,
+} from "../../util/reusableComponents";
 import BarLoader from "react-spinners/BarLoader";
 import { isMobile } from "react-device-detect";
 import { db } from "../../src/firebase.config";
 
 export default function ReadingListTab({ value, index }) {
   const router = useRouter();
-  const { readingList, setReadingList, isLoading, fetchReadingList, setIsLoading, readingPage, setReadingPage } = useReadingList();
+  const {
+    readingList,
+    setReadingList,
+    isLoading,
+    fetchReadingList,
+    setIsLoading,
+    readingPage,
+    setReadingPage,
+  } = useReadingList();
 
   const { user } = useAuth();
 
@@ -38,15 +50,13 @@ export default function ReadingListTab({ value, index }) {
     }, 250);
   }, [readingList]);
 
-  console.log(readingList);
-
-  console.log(readingPage, "testing reading page");
-
   return (
     <TabPanel value={value} index={index}>
       {!isLoading ? (
         readingList.length === 0 ? (
-          <Typography variant="h6">You don't have any book in your reading list :(</Typography>
+          <Typography variant="h6">
+            You don't have any book in your reading list :(
+          </Typography>
         ) : (
           <>
             <Container maxWidth="xs">
@@ -61,9 +71,18 @@ export default function ReadingListTab({ value, index }) {
                     <>
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <div style={{ minWidth: "70px" }}>
-                          <img src={option.imageLinks && option.imageLinks.smallThumbnail} style={{ maxHeight: "50px" }} />
+                          <img
+                            src={
+                              option.imageLinks &&
+                              option.imageLinks.smallThumbnail
+                            }
+                            style={{ maxHeight: "50px" }}
+                          />
                         </div>
-                        <Typography variant="body2" style={{ fontSize: ".8em" }}>
+                        <Typography
+                          variant="body2"
+                          style={{ fontSize: ".8em" }}
+                        >
                           {option.title}
                           {option.subtitle ? `: ${option.subtitle}` : null}
                         </Typography>
@@ -96,15 +115,51 @@ export default function ReadingListTab({ value, index }) {
                 )}
               />
             </Container>
-            <Container maxWidth="md" style={{ minHeight: "55vh", position: "relative", marginTop: "70px" }}>
+            <Container
+              maxWidth="md"
+              style={{
+                minHeight: "55vh",
+                position: "relative",
+                marginTop: "70px",
+              }}
+            >
               <Grid container spacing={4}>
-                {((!isMobile && readingList.length > 6 && paginate(readingList, 6, readingPage)) || readingList).map((book, index) => (
-                  <ReadingListBook book={book} setAlertDocId={setAlertDocId} setAlertOpen={setAlertOpen} key={`${index}-${book.data.bookId}`} />
+                {(
+                  (!isMobile &&
+                    readingList.length > 6 &&
+                    paginate(readingList, 6, readingPage)) ||
+                  readingList
+                ).map((book, index) => (
+                  <ReadingListBook
+                    book={book}
+                    setAlertDocId={setAlertDocId}
+                    setAlertOpen={setAlertOpen}
+                    key={`${index}-${book.data.bookId}`}
+                  />
                 ))}
               </Grid>
-              <RemoveBookAlert open={alertOpen} setOpen={setAlertOpen} fetchReadingList={fetchReadingList} componentType="readinglist" docId={alertDocId} />
-              {!isLoading && readingList && readingList.length > 6 && !isMobile ? (
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: "auto", position: "absolute", bottom: "0", left: "50%", transform: "translateX(-50%)" }}>
+              <RemoveBookAlert
+                open={alertOpen}
+                setOpen={setAlertOpen}
+                fetchReadingList={fetchReadingList}
+                componentType="readinglist"
+                docId={alertDocId}
+              />
+              {!isLoading &&
+              readingList &&
+              readingList.length > 6 &&
+              !isMobile ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginBottom: "auto",
+                    position: "absolute",
+                    bottom: "0",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                  }}
+                >
                   <Pagination
                     count={Math.ceil(readingList.length / 6)}
                     onChange={(e, value) => {

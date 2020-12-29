@@ -19,6 +19,8 @@ export function FinishedBooksProvider({ children }) {
 
   const { user } = useAuth();
 
+  console.log(user, "testing user");
+
   const fetchFinishedBooks = async () => {
     if (user) {
       setIsLoading(true);
@@ -52,24 +54,31 @@ export function FinishedBooksProvider({ children }) {
 
   useEffect(() => {
     console.log("finishedbooks context effect");
-    const unsubscribe = db
-      .collection("books")
-      .where("userId", "==", user.uid)
-      .where("completeStatus", "==", true)
-      .onSnapshot((snapshot) => {
-        setIsLoading(true);
-        let books = snapshot.docs.map((doc) => ({
-          docId: doc.id,
-          data: doc.data(),
-        }));
-        setFinishedBooks(books);
-        finishedBooksPage > Math.ceil(books.length / 6)
-          ? setFinishedBooksPage((page) => page - 1)
-          : null;
-      });
-
-    return unsubscribe;
-  }, []);
+    try {
+      if (user) {
+        const unsubscribe = db
+          .collection("books")
+          .where("userId", "==", user.uid)
+          .where("completeStatus", "==", true)
+          .onSnapshot((snapshot) => {
+            setIsLoading(true);
+            let books = snapshot.docs.map((doc) => ({
+              docId: doc.id,
+              data: doc.data(),
+            }));
+            setFinishedBooks(books);
+            setFinishedBooksPage((page) =>
+              books.length > 0 && page > Math.ceil(books.length / 6)
+                ? page - 1
+                : page
+            );
+          });
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [user]);
 
   const value = {
     finishedBooks,

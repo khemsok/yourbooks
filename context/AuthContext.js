@@ -16,7 +16,9 @@ export function AuthProvider({ children }) {
 
   const signIn = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
-    return auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => auth.signInWithPopup(provider));
+    return auth
+      .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => auth.signInWithPopup(provider));
   };
 
   const signOut = () => {
@@ -36,5 +38,9 @@ export function AuthProvider({ children }) {
     signIn,
     signOut,
   };
-  return <AuthContext.Provider value={value}>{!isLoading && children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {!isLoading && children}
+    </AuthContext.Provider>
+  );
 }
