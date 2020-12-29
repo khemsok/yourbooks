@@ -95,7 +95,7 @@ export function DiscoverProvider({ children }) {
           }
         }
       } else {
-        // need to change recommender to send recommendation when there is no books
+        // TODO: need to change recommender to send recommendation when there is no books
         const url = "https://www.googleapis.com/books/v1/volumes?q=sapiens&maxResults=2";
         try {
           const res = await fetch(url);

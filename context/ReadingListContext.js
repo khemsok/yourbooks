@@ -22,14 +22,20 @@ export function ReadingListProvider({ children }) {
   const fetchReadingList = async () => {
     if (user) {
       setIsLoading(true);
-      const snapshot = await db.collection("books").where("userId", "==", user.uid).where("completeStatus", "==", false).get();
+      const snapshot = await db
+        .collection("books")
+        .where("userId", "==", user.uid)
+        .where("completeStatus", "==", false)
+        .get();
       if (!snapshot.empty) {
         let data = [];
         snapshot.forEach((doc) => {
           data.push({ docId: doc.id, data: doc.data() });
         });
         setReadingList(data);
-        readingPage > Math.ceil(data.length / 6) ? setReadingPage((page) => page - 1) : null;
+        readingPage > Math.ceil(data.length / 6)
+          ? setReadingPage((page) => page - 1)
+          : null;
       } else {
         setReadingList([]);
       }
@@ -53,10 +59,25 @@ export function ReadingListProvider({ children }) {
         setReadingList(books);
         console.log(books, books.length, "books reading list");
         // console.log(readingPage, "testing testing readingpage");
-        readingPage > Math.ceil(books.length / 6) ? setReadingPage((page) => page - 1) : null;
-      });
+        readingPage > Math.ceil(books.length / 6)
+          ? setReadingPage((page) => page - 1)
+          : null;
+      })
+      .catch((err) => console.error(err));
   }, []);
 
-  const value = { readingList, setIsLoading, setReadingList, fetchReadingList, isLoading, readingPage, setReadingPage };
-  return <ReadingListContext.Provider value={value}>{children}</ReadingListContext.Provider>;
+  const value = {
+    readingList,
+    setIsLoading,
+    setReadingList,
+    fetchReadingList,
+    isLoading,
+    readingPage,
+    setReadingPage,
+  };
+  return (
+    <ReadingListContext.Provider value={value}>
+      {children}
+    </ReadingListContext.Provider>
+  );
 }

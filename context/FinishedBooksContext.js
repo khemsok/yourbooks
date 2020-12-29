@@ -23,7 +23,12 @@ export function FinishedBooksProvider({ children }) {
     if (user) {
       setIsLoading(true);
       try {
-        const snapshot = await db.collection("books").where("userId", "==", user.uid).where("completeStatus", "==", true).orderBy("end", "desc").get();
+        const snapshot = await db
+          .collection("books")
+          .where("userId", "==", user.uid)
+          .where("completeStatus", "==", true)
+          .orderBy("end", "desc")
+          .get();
         console.log("fetchfinsihedbook");
         if (!snapshot.empty) {
           let data = [];
@@ -31,7 +36,9 @@ export function FinishedBooksProvider({ children }) {
             data.push({ docId: doc.id, data: doc.data() });
           });
           setFinishedBooks(data);
-          finishedBooksPage > Math.ceil(data.length / 6) ? setFinishedBooksPage((page) => page - 1) : null;
+          finishedBooksPage > Math.ceil(data.length / 6)
+            ? setFinishedBooksPage((page) => page - 1)
+            : null;
         } else {
           setFinishedBooks([]);
         }
@@ -55,10 +62,24 @@ export function FinishedBooksProvider({ children }) {
           data: doc.data(),
         }));
         setFinishedBooks(books);
-        finishedBooksPage > Math.ceil(books.length / 6) ? setFinishedBooksPage((page) => page - 1) : null;
-      });
+        finishedBooksPage > Math.ceil(books.length / 6)
+          ? setFinishedBooksPage((page) => page - 1)
+          : null;
+      })
+      .catch((err) => console.error(err));
   }, []);
 
-  const value = { finishedBooks, fetchFinishedBooks, isLoading, setIsLoading, finishedBooksPage, setFinishedBooksPage };
-  return <FinishedBooksContext.Provider value={value}>{children}</FinishedBooksContext.Provider>;
+  const value = {
+    finishedBooks,
+    fetchFinishedBooks,
+    isLoading,
+    setIsLoading,
+    finishedBooksPage,
+    setFinishedBooksPage,
+  };
+  return (
+    <FinishedBooksContext.Provider value={value}>
+      {children}
+    </FinishedBooksContext.Provider>
+  );
 }
