@@ -28,7 +28,12 @@ import RemoveIcon from "@material-ui/icons/Remove";
 // util
 import BarLoader from "react-spinners/BarLoader";
 import { db } from "../src/firebase.config";
-import { ReadMore, displayDetails, estReadingTime, RemoveBookAlert } from "../util/reusableComponents";
+import {
+  ReadMore,
+  displayDetails,
+  estReadingTime,
+  RemoveBookAlert,
+} from "../util/reusableComponents";
 import { isMobile } from "react-device-detect";
 import DateFnsUtils from "@date-io/date-fns";
 import moment from "moment";
@@ -229,12 +234,17 @@ export default function Books() {
     error: "",
   };
 
-  const [{ id: bookId, data, isLoading, error }, dispatch] = useReducer(booksReducer, initialState);
+  const [{ id: bookId, data, isLoading, error }, dispatch] = useReducer(
+    booksReducer,
+    initialState
+  );
 
   async function fetchData() {
     dispatch({ type: "FETCH_REQUEST" });
     try {
-      const res = await fetch(`https://www.googleapis.com/books/v1/volumes/${id}`);
+      const res = await fetch(
+        `https://www.googleapis.com/books/v1/volumes/${id}`
+      );
       const data = await res.json();
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (err) {
@@ -244,13 +254,20 @@ export default function Books() {
 
   async function fetchBookUserStatus() {
     try {
-      const doc = await db.collection("books").where("bookId", "==", id).where("userId", "==", user.uid).limit(1).get();
+      const doc = await db
+        .collection("books")
+        .where("bookId", "==", id)
+        .where("userId", "==", user.uid)
+        .limit(1)
+        .get();
       console.log("fetchbookuserstatus", id);
       if (!doc.empty) {
         setBookUserStatus({ docId: doc.docs[0].id, data: doc.docs[0].data() });
         setNotesValue(doc.docs[0].data().notes);
         setRating(doc.docs[0].data().rating ? doc.docs[0].data().rating : null);
-        setStartDate(doc.docs[0].data().start ? doc.docs[0].data().start : null);
+        setStartDate(
+          doc.docs[0].data().start ? doc.docs[0].data().start : null
+        );
         setEndDate(doc.docs[0].data().end ? doc.docs[0].data().end : null);
       } else {
         setBookUserStatus(null);
@@ -285,7 +302,10 @@ export default function Books() {
   return (
     <>
       <Container maxWidth="xl" style={{ marginBottom: "10px" }}>
-        <IconButton onClick={() => Router.back()} size={isMobile ? "small" : "medium"}>
+        <IconButton
+          onClick={() => Router.back()}
+          size={isMobile ? "small" : "medium"}
+        >
           <ArrowBackIcon />
         </IconButton>
       </Container>
@@ -294,7 +314,14 @@ export default function Books() {
           <>
             <div className={classes.booksContainer}>
               <div className={classes.booksThumbnailContainer}>
-                <img src={data.volumeInfo.imageLinks ? data.volumeInfo.imageLinks.thumbnail : "/no_cover.svg"} className={classes.booksThumbnail} />
+                <img
+                  src={
+                    data.volumeInfo.imageLinks
+                      ? data.volumeInfo.imageLinks.thumbnail
+                      : "/no_cover.svg"
+                  }
+                  className={classes.booksThumbnail}
+                />
               </div>
               <div>
                 <Typography variant="h6" className={classes.booksTitle}>
@@ -302,22 +329,35 @@ export default function Books() {
                   {data.volumeInfo.subtitle && `: ${data.volumeInfo.subtitle}`}
                 </Typography>
                 <Typography variant="body1" className={classes.booksAuthor}>
-                  {data.volumeInfo.authors && data.volumeInfo.authors.join(", ")}
+                  {data.volumeInfo.authors &&
+                    data.volumeInfo.authors.join(", ")}
                 </Typography>
 
                 <Typography variant="body2" className={classes.booksDetail}>
-                  {displayDetails(data.volumeInfo.publishedDate, data.volumeInfo.categories, data.volumeInfo.averageRating)}
+                  {displayDetails(
+                    data.volumeInfo.publishedDate,
+                    data.volumeInfo.categories,
+                    data.volumeInfo.averageRating
+                  )}
                 </Typography>
 
                 {data.volumeInfo.pageCount ? (
-                  <Tooltip title={`${data.volumeInfo.pageCount} pages`} placement="top">
-                    <Typography variant="body1" className={classes.booksEstReadingTime}>
+                  <Tooltip
+                    title={`${data.volumeInfo.pageCount} pages`}
+                    placement="top"
+                  >
+                    <Typography
+                      variant="body1"
+                      className={classes.booksEstReadingTime}
+                    >
                       {estReadingTime(data.volumeInfo.pageCount)}
                     </Typography>
                   </Tooltip>
                 ) : null}
 
-                {user && bookUserStatus && Object.keys(bookUserStatus).length !== 0 ? (
+                {user &&
+                bookUserStatus &&
+                Object.keys(bookUserStatus).length !== 0 ? (
                   <>
                     <div>
                       <Rating
@@ -326,14 +366,31 @@ export default function Books() {
                         style={{ marginBottom: "10px" }}
                         onChange={async (e, value) => {
                           setRating(value);
-                          await db.doc(`/books/${bookUserStatus.docId}`).update({ rating: value });
+                          await db
+                            .doc(`/books/${bookUserStatus.docId}`)
+                            .update({ rating: value });
                         }}
                         name="rating"
                       />
                     </div>
-                    <div style={{ marginBottom: "20px", display: "flex", alignItems: "flex-start", flexWrap: "wrap" }}>
+                    <div
+                      style={{
+                        marginBottom: "20px",
+                        display: "flex",
+                        alignItems: "flex-start",
+                        flexWrap: "wrap",
+                      }}
+                    >
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px", marginRight: "20px" }} className={classes.startDatePicker}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "flex-end",
+                            maxWidth: "150px",
+                            marginRight: "20px",
+                          }}
+                          className={classes.startDatePicker}
+                        >
                           <DatePicker
                             margin="none"
                             // variant="inline"
@@ -341,11 +398,17 @@ export default function Books() {
                             format="MM/dd/yyyy"
                             value={startDate}
                             InputProps={{ className: classes.datePickerInput }}
-                            InputLabelProps={{ className: classes.datePickerLabel }}
+                            InputLabelProps={{
+                              className: classes.datePickerLabel,
+                            }}
                             onChange={async (date) => {
-                              const updateDate = moment(date).format("MM/DD/YYYY");
+                              const updateDate = moment(date).format(
+                                "MM/DD/YYYY"
+                              );
                               setStartDate(updateDate);
-                              await db.doc(`/books/${bookUserStatus.docId}`).update({ start: updateDate });
+                              await db
+                                .doc(`/books/${bookUserStatus.docId}`)
+                                .update({ start: updateDate });
                             }}
                           />
                           <IconButton
@@ -354,27 +417,44 @@ export default function Books() {
                             size="small"
                             disabled={!startDate}
                             onClick={async () => {
-                              await db.doc(`/books/${bookUserStatus.docId}`).update({ start: null });
+                              await db
+                                .doc(`/books/${bookUserStatus.docId}`)
+                                .update({ start: null });
                               setStartDate(null);
                             }}
                           >
                             <ClearIcon className={classes.clearIcon} />
                           </IconButton>
                         </div>
-                        <div style={{ display: "flex", alignItems: "flex-end", maxWidth: "150px" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "flex-end",
+                            maxWidth: "150px",
+                          }}
+                        >
                           <DatePicker
                             margin="none"
                             label="End Date"
                             format="MM/dd/yyyy"
                             value={endDate}
                             InputProps={{ className: classes.datePickerInput }}
-                            InputLabelProps={{ className: classes.datePickerLabel }}
+                            InputLabelProps={{
+                              className: classes.datePickerLabel,
+                            }}
                             onChange={async (date) => {
                               try {
-                                const updateDate = moment(date).format("MM/DD/YYYY");
+                                const updateDate = moment(date).format(
+                                  "MM/DD/YYYY"
+                                );
                                 setEndDate(updateDate);
 
-                                await db.doc(`/books/${bookUserStatus.docId}`).update({ end: updateDate, completeStatus: true });
+                                await db
+                                  .doc(`/books/${bookUserStatus.docId}`)
+                                  .update({
+                                    end: updateDate,
+                                    completeStatus: true,
+                                  });
                               } catch (e) {}
                             }}
                           />
@@ -384,7 +464,9 @@ export default function Books() {
                             size="small"
                             disabled={!endDate}
                             onClick={async () => {
-                              await db.doc(`/books/${bookUserStatus.docId}`).update({ end: null, completeStatus: false });
+                              await db
+                                .doc(`/books/${bookUserStatus.docId}`)
+                                .update({ end: null, completeStatus: false });
                               setEndDate(null);
                             }}
                           >
@@ -396,11 +478,18 @@ export default function Books() {
                   </>
                 ) : null}
 
-                <div className={classes.booksDescription}>{data.volumeInfo.description ? <ReadMore>{data.volumeInfo.description}</ReadMore> : null}</div>
+                {/* <div className={classes.booksDescription}>{data.volumeInfo.description ? <ReadMore>{data.volumeInfo.description}</ReadMore> : null}</div> */}
+                <ReadMore description={data.volumeInfo.description} />
               </div>
             </div>
             {user ? (
-              <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginBottom: "10px",
+                }}
+              >
                 {bookUserStatus ? (
                   <Button
                     onClick={async () => {
@@ -409,7 +498,10 @@ export default function Books() {
                   >
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <RemoveIcon className={classes.readingIcon} />
-                      <Typography variant="body2" className={classes.readingList}>
+                      <Typography
+                        variant="body2"
+                        className={classes.readingList}
+                      >
                         Remove from Reading List
                         {/* {bookUserStatus.data.completeStatus ? "Remove from Finished Books" : "Remove from Reading List"} */}
                       </Typography>
@@ -419,7 +511,12 @@ export default function Books() {
                   <Button
                     onClick={async () => {
                       try {
-                        const doc = await db.collection("books").where("bookId", "==", data.id).where("userId", "==", user.uid).limit(1).get();
+                        const doc = await db
+                          .collection("books")
+                          .where("bookId", "==", data.id)
+                          .where("userId", "==", user.uid)
+                          .limit(1)
+                          .get();
                         console.log("get book");
                         if (doc.empty) {
                           await db.collection("books").add({
@@ -442,7 +539,10 @@ export default function Books() {
                   >
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <AddIcon className={classes.readingIcon} />
-                      <Typography variant="body2" className={classes.readingList}>
+                      <Typography
+                        variant="body2"
+                        className={classes.readingList}
+                      >
                         Add to Reading List
                       </Typography>
                     </div>
@@ -452,7 +552,9 @@ export default function Books() {
             ) : null}
 
             {/* </div> */}
-            {user && bookUserStatus && Object.keys(bookUserStatus).length !== 0 ? (
+            {user &&
+            bookUserStatus &&
+            Object.keys(bookUserStatus).length !== 0 ? (
               <>
                 <TextField
                   fullWidth
@@ -479,11 +581,21 @@ export default function Books() {
                     setNotesValue(e.target.value);
                   }}
                 />
-                <Autosave docId={bookUserStatus.docId} notesValue={notesValue} setIsLoadingNotes={setIsLoadingNotes} />
+                <Autosave
+                  docId={bookUserStatus.docId}
+                  notesValue={notesValue}
+                  setIsLoadingNotes={setIsLoadingNotes}
+                />
               </>
             ) : null}
             <>
-              <RemoveBookAlert open={alertOpen} setOpen={setAlertOpen} bookUserStatus={bookUserStatus} fetchBookUserStatus={fetchBookUserStatus} componentType="books" />
+              <RemoveBookAlert
+                open={alertOpen}
+                setOpen={setAlertOpen}
+                bookUserStatus={bookUserStatus}
+                fetchBookUserStatus={fetchBookUserStatus}
+                componentType="books"
+              />
             </>
           </>
         ) : (

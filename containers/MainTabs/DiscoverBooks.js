@@ -18,7 +18,11 @@ import RemoveIcon from "@material-ui/icons/Remove";
 import SkewLoader from "react-spinners/SkewLoader";
 import moment from "moment";
 import { db } from "../../src/firebase.config";
-import { ReadMore, displayDetails, RemoveBookAlert } from "../../util/reusableComponents";
+import {
+  ReadMore,
+  displayDetails,
+  RemoveBookAlert,
+} from "../../util/reusableComponents";
 
 const useStyles = makeStyles((theme) => ({
   hidden: {
@@ -85,7 +89,12 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DiscoverBooks() {
   const classes = useStyles();
-  const { discoverBooks, setDiscoverBooks, isLoading, checkDocDetail } = useDiscover();
+  const {
+    discoverBooks,
+    setDiscoverBooks,
+    isLoading,
+    checkDocDetail,
+  } = useDiscover();
   const { user } = useAuth();
 
   const [alertOpen, setAlertOpen] = useState(false);
@@ -98,7 +107,14 @@ export default function DiscoverBooks() {
         <div style={{ display: "flex" }}>
           <div className={classes.discoverBooksThumbnailContainer}>
             <Link href={`/books?id=${book.id}`}>
-              <img className={classes.discoverBooksThumbnail} src={book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : "/no_cover.svg"} />
+              <img
+                className={classes.discoverBooksThumbnail}
+                src={
+                  book.volumeInfo.imageLinks
+                    ? book.volumeInfo.imageLinks.thumbnail
+                    : "/no_cover.svg"
+                }
+              />
             </Link>
           </div>
 
@@ -114,10 +130,15 @@ export default function DiscoverBooks() {
             </Typography>
 
             <Typography variant="body2" className={classes.discoverBooksDetail}>
-              {displayDetails(book.volumeInfo.publishedDate, book.volumeInfo.categories, book.volumeInfo.averageRating)}
+              {displayDetails(
+                book.volumeInfo.publishedDate,
+                book.volumeInfo.categories,
+                book.volumeInfo.averageRating
+              )}
             </Typography>
 
-            <div className={classes.discoverBooksDescription}>{book.volumeInfo.description ? <ReadMore>{book.volumeInfo.description}</ReadMore> : null}</div>
+            <ReadMore description={book.volumeInfo.description} />
+            {/* <div className={classes.discoverBooksDescription}>{book.volumeInfo.description ? <ReadMore>{book.volumeInfo.description}</ReadMore> : null}</div> */}
           </div>
         </div>
         {user ? (
@@ -142,7 +163,12 @@ export default function DiscoverBooks() {
             ) : (
               <Button
                 onClick={async () => {
-                  const doc = await db.collection("books").where("bookId", "==", book.id).where("userId", "==", user.uid).limit(1).get();
+                  const doc = await db
+                    .collection("books")
+                    .where("bookId", "==", book.id)
+                    .where("userId", "==", user.uid)
+                    .limit(1)
+                    .get();
                   console.log("get book");
                   let docRef;
                   if (doc.empty) {
@@ -184,13 +210,24 @@ export default function DiscoverBooks() {
             )}
           </div>
         ) : null}
-        <RemoveBookAlert componentType="discover" open={alertOpen} setOpen={setAlertOpen} books={discoverBooks} book={alertBook} setDiscoverBooks={setDiscoverBooks} docId={alertDocId} />
+        <RemoveBookAlert
+          componentType="discover"
+          open={alertOpen}
+          setOpen={setAlertOpen}
+          books={discoverBooks}
+          book={alertBook}
+          setDiscoverBooks={setDiscoverBooks}
+          docId={alertDocId}
+        />
       </div>
     ))
   ) : (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <SkewLoader color={"#000"} loading={isLoading} />
-      <Typography variant="h6" style={{ fontSize: ".85em", marginLeft: "10px" }}>
+      <Typography
+        variant="h6"
+        style={{ fontSize: ".85em", marginLeft: "10px" }}
+      >
         Recommending...
       </Typography>
     </div>

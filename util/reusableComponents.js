@@ -21,13 +21,21 @@ export function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
-    <Typography component="div" role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
+    <Typography
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
       {value === index && <Box p={3}>{value === index && children}</Box>}
     </Typography>
   );
 }
 
-export function ReadMore({ children }) {
+export function ReadMore({ description }) {
+  const LENGTH = 400;
   const classes = makeStyles({
     hidden: {
       display: "-webkit-box",
@@ -40,25 +48,49 @@ export function ReadMore({ children }) {
   const [isHidden, setIsHidden] = useState(true);
   return (
     <>
-      <div dangerouslySetInnerHTML={{ __html: children.replace(/(<([^>]+)>)/gi, " ") }} className={isHidden ? classes.hidden : null} />
-      <span>
-        {children.length > 400 ? (
-          <a style={{ cursor: "pointer", fontWeight: "700" }} onClick={() => setIsHidden(!isHidden)}>
-            {isHidden ? "(More)" : "(Less)"}
-          </a>
-        ) : null}
-      </span>
+      {description && (
+        <>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: isHidden
+                ? `${description.slice(0, LENGTH)}...`
+                : description,
+            }}
+          />
+          <span>
+            {description.length > LENGTH ? (
+              <a
+                style={{ cursor: "pointer", fontWeight: "700" }}
+                onClick={() => setIsHidden(!isHidden)}
+              >
+                {isHidden ? "(More)" : "(Less)"}
+              </a>
+            ) : null}
+          </span>
+        </>
+      )}
     </>
   );
 }
 
 export const displayDetails = (publishedDate, categories, rating) => {
-  return [moment(publishedDate).format("YYYY"), categories && categories[0], rating ? `${rating}/5` : undefined].filter((el) => el !== undefined).join(" • ");
+  return [
+    moment(publishedDate).format("YYYY"),
+    categories && categories[0],
+    rating ? `${rating}/5` : undefined,
+  ]
+    .filter((el) => el !== undefined)
+    .join(" • ");
 };
 
 export const checkDocDetail = async (id, user = null) => {
   if (user) {
-    const doc = await db.collection("books").where("userId", "==", user.uid).where("bookId", "==", id).limit(1).get();
+    const doc = await db
+      .collection("books")
+      .where("userId", "==", user.uid)
+      .where("bookId", "==", id)
+      .limit(1)
+      .get();
     console.log("checkdocdetail");
     const docId = !doc.empty ? doc.docs[0].id : "";
     const docDetail = {
@@ -89,7 +121,11 @@ export const checkDocsDetail = async (books, user = null) => {
   if (user) {
     const bookIds = Object.keys(bookData);
     console.log("check docs detail: getting data from db ");
-    const docs = await db.collection("books").where("userId", "==", user.uid).where("bookId", "in", bookIds).get();
+    const docs = await db
+      .collection("books")
+      .where("userId", "==", user.uid)
+      .where("bookId", "in", bookIds)
+      .get();
 
     docs.docs.map((doc) => {
       let bookId = doc.data()["bookId"];
@@ -105,7 +141,12 @@ export const checkDocsDetail = async (books, user = null) => {
 
 export const checkDocExists = async (id, user = null) => {
   if (user) {
-    const doc = await db.collection("books").where("bookId", "==", id).where("userId", "==", user.uid).limit(1).get();
+    const doc = await db
+      .collection("books")
+      .where("bookId", "==", id)
+      .where("userId", "==", user.uid)
+      .limit(1)
+      .get();
     console.log("checkdocexists");
     return !doc.empty;
   } else {
@@ -121,7 +162,9 @@ export const estReadingTime = (pages) => {
   const hours = Math.ceil(time / 60);
   const minutes = time % 60;
 
-  return `Est. Reading Time ${hours ? hours + " hours" : ""} ${minutes ? minutes + " minutes" : ""}  `;
+  return `Est. Reading Time ${hours ? hours + " hours" : ""} ${
+    minutes ? minutes + " minutes" : ""
+  }  `;
 };
 
 export const displayBookTitle = (title, subtitle) => {
@@ -137,10 +180,26 @@ export function paginate(array, page_size, page_number) {
 }
 
 export function arrayEquals(a, b) {
-  return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((val, index) => val === b[index]);
+  return (
+    Array.isArray(a) &&
+    Array.isArray(b) &&
+    a.length === b.length &&
+    a.every((val, index) => val === b[index])
+  );
 }
 
-export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, bookUserStatus, fetchBookUserStatus, componentType, fetchReadingList, fetchFinishedBooks }) => {
+export const RemoveBookAlert = ({
+  open,
+  setOpen,
+  book,
+  setDiscoverBooks,
+  docId,
+  bookUserStatus,
+  fetchBookUserStatus,
+  componentType,
+  fetchReadingList,
+  fetchFinishedBooks,
+}) => {
   const handleClose = () => {
     setOpen(false);
   };
@@ -220,7 +279,9 @@ export const RemoveBookAlert = ({ open, setOpen, book, setDiscoverBooks, docId, 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Are you sure you want to delete this book?</DialogTitle>
         <DialogContent>
-          <DialogContentText>Once delete, you cannot recover the saved data.</DialogContentText>
+          <DialogContentText>
+            Once delete, you cannot recover the saved data.
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -252,7 +313,13 @@ export function CustomTooltip({ children, title }) {
     },
   })();
   return (
-    <Tooltip classes={{ tooltip: classes.tooltip, arrow: classes.arrow }} title={title} placement="top" TransitionComponent={Fade} TransitionProps={{ timeout: 250 }}>
+    <Tooltip
+      classes={{ tooltip: classes.tooltip, arrow: classes.arrow }}
+      title={title}
+      placement="top"
+      TransitionComponent={Fade}
+      TransitionProps={{ timeout: 250 }}
+    >
       {children}
     </Tooltip>
   );
