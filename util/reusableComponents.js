@@ -36,14 +36,13 @@ export function TabPanel(props) {
 
 export function ReadMore({ description }) {
   const LENGTH = 400;
-  const classes = makeStyles({
-    hidden: {
-      display: "-webkit-box",
-      WebkitLineClamp: 4,
-      overflow: "hidden",
-      WebkitBoxOrient: "vertical",
+  const classes = makeStyles((theme) => ({
+    booksDescription: {
+      [theme.breakpoints.down("sm")]: {
+        fontSize: ".65em",
+      },
     },
-  })();
+  }))();
 
   const [isHidden, setIsHidden] = useState(true);
   return (
@@ -51,13 +50,14 @@ export function ReadMore({ description }) {
       {description && (
         <>
           <div
+            className={classes.booksDescription}
             dangerouslySetInnerHTML={{
               __html: isHidden
                 ? `${description.slice(0, LENGTH)}...`
                 : description,
             }}
           />
-          <span>
+          <span className={classes.booksDescription}>
             {description.length > LENGTH ? (
               <a
                 style={{ cursor: "pointer", fontWeight: "700" }}
